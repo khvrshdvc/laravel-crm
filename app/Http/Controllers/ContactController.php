@@ -7,53 +7,75 @@ use App\Http\Requests\UpdateContactRequest;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Services\ContactService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ContactController extends Controller
 {
-    public function index()
+   
+    public function __construct(
+        protected ContactService $contactService
+    ) {}
+
+    public function index(Request $request): View
     {
-        $contacts = Contact::with('company')->paginate(20);
+        $contacts = $this->contactService->getPaginated(
+            filters: $request->only(['company_id']),
+            perPage: 20
+        );
+
         return view('contacts.index', compact('contacts'));
     }
 
-    public function create()
+    public function create(): View
     {
-        $companies = Company::all();
+        $companies = Company::select('id', 'name')->orderBy('name')->get();
+
         return view('contacts.create', compact('companies'));
     }
 
-    public function store(StoreContactRequest $request, ContactService $service)
+    public function store(StoreContactRequest $request): RedirectResponse
     {
-        $contact = $service->create($request->validated(), $request->user());
+        $contact = $this->contactService->create(
+            data: $request->validated(),
+            user: $request->user()
+        );
 
-        return redirect()->route('contacts.show', $contact)
-            ->with('success', 'Contact created.');
+        return redirect()
+            ->route('contacts.show', $contact)
+            ->with('success', 'Kontakt muvaffaqiyatli yaratildi.');
     }
 
-    public function show(Contact $contact)
+    public function show(Contact $contact): View
     {
+        $contact->load(['company', 'createdBy']);
+
         return view('contacts.show', compact('contact'));
     }
 
-    public function edit(Contact $contact)
+    public function edit(Contact $contact): View
     {
-        $companies = Company::all();
+        $companies = Company::select('id', 'name')->orderBy('name')->get();
+
         return view('contacts.edit', compact('contact', 'companies'));
     }
 
-    public function update(UpdateContactRequest $request, Contact $contact, ContactService $service)
+    public function update(UpdateContactRequest $request, Contact $contact): RedirectResponse
     {
-        $service->update($contact, $request->validated());
+        $this->contactService->update($contact, $request->validated());
 
-        return redirect()->route('contacts.show', $contact)
-            ->with('success', 'Contact updated.');
+        return redirect()
+            ->route('contacts.show', $contact)
+            ->with('success', 'Kontakt muvaffaqiyatli yangilandi.');
     }
 
-    public function destroy(Contact $contact, ContactService $service)
+    public function destroy(Contact $contact): RedirectResponse
     {
-        $service->delete($contact);
+        $this->contactService->delete($contact);
 
-        return redirect()->route('contacts.index')
-            ->with('success', 'Contact deleted.');
+        return redirect()
+            ->route('contacts.index')
+            ->with('success', 'Kontakt muvaffaqiyatli o\'chirildi.');
     }
 }

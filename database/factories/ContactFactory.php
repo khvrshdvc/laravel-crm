@@ -16,7 +16,7 @@ class ContactFactory extends Factory
             'email' => fake()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'position' => fake()->jobTitle(),
-            'company_id' => Company::factory(),
+            'company_id' => Company::inRandomOrder()->first()?->id ?? Company::factory(),
             'created_by' => User::factory(),
         ];
     }

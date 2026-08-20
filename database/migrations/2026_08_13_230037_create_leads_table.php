@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\LeadStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,18 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('source')->nullable();
-            $table->string('status')->default('new');
+            $table->string('status')->default(LeadStatus::New->value);
+
+            
+            $table->foreignId('company_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId('contact_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
             $table->foreignId('assigned_to')
                 ->nullable()
@@ -28,7 +40,7 @@ return new class extends Migration
             $table->foreignId('created_by')
                 ->constrained('users');
 
-            $table->timestamps();
+            $table->timestamps();;
         });
     }
 

@@ -93,8 +93,9 @@
                     </tbody>
                 </table>
             </div>
-
         </div>
-
+        <div class="mt-6">
+            {{ $companies->links() }}
+        </div>
     </div>
 </x-app-layout>

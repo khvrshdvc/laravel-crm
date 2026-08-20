@@ -3,15 +3,15 @@
 
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-semibold text-gray-900">Contacts</h1>
+                <h1 class="text-2xl font-semibold text-gray-900">Leads</h1>
                 <p class="mt-1 text-sm text-gray-500">
-                    Manage your individual contacts and people.
+                    Track and manage potential business opportunities.
                 </p>
             </div>
 
-            <a href="{{ route('contacts.create') }}"
+            <a href="{{ route('leads.create') }}"
                 class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                + Add contact
+                + Add lead
             </a>
         </div>
 
@@ -27,30 +27,36 @@
                 <table class="w-full text-sm text-left">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-4 font-medium text-gray-500">Name</th>
+                            <th class="px-6 py-4 font-medium text-gray-500">Lead Name</th>
+                            <th class="px-6 py-4 font-medium text-gray-500">Status</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Company</th>
-                            <th class="px-6 py-4 font-medium text-gray-500">Email</th>
-                            <th class="px-6 py-4 font-medium text-gray-500">Phone</th>
+                            <th class="px-6 py-4 font-medium text-gray-500">Source</th>
                             <th class="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
-                        @forelse($contacts as $contact)
+                        @forelse($leads as $lead)
                             <tr class="hover:bg-gray-50 transition">
 
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('contacts.show', $contact) }}"
+                                    <a href="{{ route('leads.show', $lead) }}"
                                         class="font-medium text-gray-900 hover:underline">
-                                        {{ $contact->first_name }} {{ $contact->last_name }}
+                                        {{ $lead->name }}
                                     </a>
                                 </td>
 
+                                <td class="px-6 py-4">
+                                    <span class="text-xs font-medium text-gray-600 tracking-wide uppercase">
+                                        {{ $lead->status->value ?? $lead->status }}
+                                    </span>
+                                </td>
+
                                 <td class="px-6 py-4 text-gray-500">
-                                    @if ($contact->company)
-                                        <a href="{{ route('companies.show', $contact->company) }}"
+                                    @if ($lead->company)
+                                        <a href="{{ route('companies.show', $lead->company) }}"
                                             class="hover:underline text-gray-700">
-                                            {{ $contact->company->name }}
+                                            {{ $lead->company->name }}
                                         </a>
                                     @else
                                         —
@@ -58,22 +64,18 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-500">
-                                    {{ $contact->email ?? '—' }}
-                                </td>
-
-                                <td class="px-6 py-4 text-gray-500">
-                                    {{ $contact->phone ?? '—' }}
+                                    {{ $lead->source ?? '—' }}
                                 </td>
 
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end items-center gap-3">
-                                        <a href="{{ route('contacts.edit', $contact) }}"
+                                        <a href="{{ route('leads.edit', $lead) }}"
                                             class="text-gray-600 hover:text-gray-900">
                                             Edit
                                         </a>
 
-                                        <form action="{{ route('contacts.destroy', $contact) }}" method="POST"
-                                            onsubmit="return confirm('Delete this contact?')">
+                                        <form action="{{ route('leads.destroy', $lead) }}" method="POST"
+                                            onsubmit="return confirm('Delete this lead?')">
                                             @csrf
                                             @method('DELETE')
 
@@ -88,11 +90,11 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
-                                    <p class="text-gray-500">No contacts found.</p>
+                                    <p class="text-gray-500">No leads found.</p>
 
-                                    <a href="{{ route('contacts.create') }}"
+                                    <a href="{{ route('leads.create') }}"
                                         class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                        Add your first contact
+                                        Add your first lead
                                     </a>
                                 </td>
                             </tr>
@@ -103,7 +105,7 @@
         </div>
 
         <div class="mt-6">
-            {{ $contacts->links() }}
+            {{ $leads->links() }}
         </div>
     </div>
 </x-app-layout>

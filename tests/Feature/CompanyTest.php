@@ -9,27 +9,25 @@ use Tests\TestCase;
 
 class CompanyTest extends TestCase
 {
-    use RefreshDatabase; // Har bir testdan so'ng bazani tozalab turadi
+    use RefreshDatabase;
 
     protected User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
-        // Har bir test uchun soxta foydalanuvchi yaratamiz
+       
         $this->user = User::factory()->create();
     }
 
-    /** @test */
-    public function user_can_view_companies_list(): void
+    public function test_user_can_view_companies_list(): void
     {
         $response = $this->actingAs($this->user)->get('/companies');
 
         $response->assertStatus(200);
     }
 
-    /** @test */
-    public function user_can_create_company(): void
+    public function test_user_can_create_company(): void
     {
         $data = [
             'name' => 'Google LLC',
@@ -48,8 +46,7 @@ class CompanyTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function user_can_update_company(): void
+    public function test_user_can_update_company(): void
     {
         $company = Company::factory()->create(['name' => 'Old Name']);
 
@@ -67,8 +64,7 @@ class CompanyTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function user_can_delete_company(): void
+    public function test_user_can_delete_company(): void
     {
         $company = Company::factory()->create();
 

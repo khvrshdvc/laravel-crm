@@ -39,14 +39,20 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
             <div class="bg-white border border-gray-200 rounded-xl p-5">
-                <p class="text-sm text-gray-500">Contacts</p>
+                <a href="{{ route('contacts.index', ['company_id' => $company->id]) }}"
+                    class="text-sm text-gray-500 hover:text-blue-600 hover:underline transition">
+                    Contacts
+                </a>
                 <p class="mt-2 text-2xl font-semibold text-gray-900">
                     {{ $company->contacts_count ?? $company->contacts->count() }}
                 </p>
             </div>
 
             <div class="bg-white border border-gray-200 rounded-xl p-5">
-                <p class="text-sm text-gray-500">Leads</p>
+                <a href="{{ route('leads.index', ['company_id' => $company->id]) }}"
+                    class="text-sm text-gray-500 hover:text-blue-600 hover:underline transition">
+                    Leads
+                </a>
                 <p class="mt-2 text-2xl font-semibold text-gray-900">
                     {{ $company->leads_count ?? $company->leads->count() }}
                 </p>
@@ -104,7 +110,7 @@
                 </div>
             </div>
         </div>
-
+        {{--
         <div class="bg-white border border-gray-200 rounded-xl mt-6">
             <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-900">Contacts</h2>
@@ -134,6 +140,7 @@
                 </div>
             @endif
         </div>
+        --}}
 
     </div>
 </x-app-layout>

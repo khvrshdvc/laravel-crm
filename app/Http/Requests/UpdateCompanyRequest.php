@@ -31,11 +31,4 @@ class UpdateCompanyRequest extends FormRequest
         ];
     }
 
-    public function messages(): array
-    {
-        return [
-            'name.required' => 'A title is required!',
-            'email.email' => 'An email must be email!',
-        ];
-    }
 }
