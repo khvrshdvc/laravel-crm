@@ -12,7 +12,7 @@ class Company extends Model
     /** @use HasFactory<\Database\Factories\CompanyFactory> */
     use HasFactory, HasTasks, HasNotes;
 
-     protected $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'phone',
@@ -26,20 +26,18 @@ class Company extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function contacts() 
+    public function contacts()
     {
         return $this->hasMany(Contact::class);
     }
 
-    public function leads() 
+    public function leads()
     {
         return $this->hasMany(Lead::class);
     }
 
-    public function deals() 
+    public function deals()
     {
         return $this->hasMany(Deal::class);
     }
-
-    
 }

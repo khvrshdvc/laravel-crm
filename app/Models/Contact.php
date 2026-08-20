@@ -10,6 +10,16 @@ class Contact extends Model
 {
     use HasFactory, HasNotes;
 
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'position',
+        'company_id',
+        'created_by',
+    ];
+
     public function company()
     {
         return $this->belongsTo(Company::class);

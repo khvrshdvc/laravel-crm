@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCompanyRequest;
+use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Services\CompanyService;
 use Illuminate\Http\Request;
@@ -31,8 +32,8 @@ class CompanyController extends Controller
 
     public function show(Company $company)
     {
-        $company->load(['contacts', 'leads', 'deals', 'user']);
-
+        $company->loadCount(['contacts', 'leads', 'deals']);
+        $company->load('contacts');
         return view('companies.show', compact('company'));
     }
 
@@ -41,15 +42,9 @@ class CompanyController extends Controller
         return view('companies.edit', compact('company'));
     }
 
-    public function update(Request $request, Company $company)
+    public function update(UpdateCompanyRequest $request, Company $company)
     {
-        $company->update($request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:255',
-            'website' => 'nullable|url|max:255',
-            'address' => 'nullable|string|max:500',
-        ]));
+        $company->update($request->validated());
 
         return redirect()->route('companies.show', $company)
             ->with('success', 'Company updated!');

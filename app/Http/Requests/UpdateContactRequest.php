@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCompanyRequest extends FormRequest
+class UpdateContactRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,19 +23,12 @@ class UpdateCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'website' => ['nullable', 'url'],
-            'address' => ['nullable', 'string'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'name.required' => 'A title is required!',
-            'email.email' => 'An email must be email!',
+            'first_name' => ['required', 'string', 'max:50'],
+            'last_name' => ['nullable', 'string', 'max:50'],
+            'email' => ['required', 'email'],
+            'phone' => ['required', 'string'],
+            'position' => ['nullable', 'string', 'max:255'],
+            'company_id' => ['required', 'exists:companies,id'],
         ];
     }
 }

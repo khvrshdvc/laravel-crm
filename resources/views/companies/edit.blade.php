@@ -15,8 +15,9 @@
             </p>
         </div>
 
+        <!-- ASOSIY UPDATE FORMASI -->
         <form action="{{ route('companies.update', $company) }}" method="POST"
-            class="bg-white border border-gray-200 rounded-xl p-6">
+            class="bg-white border border-gray-200 rounded-xl p-6" novalidate>
 
             @csrf
             @method('PUT')
@@ -28,7 +29,7 @@
                         Company name
                     </label>
 
-                    <input type="text" id="name" name="name" value="{{ old('name', $company->name) }}" required
+                    <input type="text" id="name" name="name" value="{{ old('name', $company->name) }}"
                         class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
 
                     @error('name')
@@ -92,19 +93,12 @@
             </div>
 
             <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
-
-                <form action="{{ route('companies.destroy', $company) }}" method="POST"
-                    onsubmit="return confirm('Delete this company?')">
-                    @csrf
-                    @method('DELETE')
-
-                    <button type="submit" class="text-sm text-red-500 hover:text-red-700">
-                        Delete company
-                    </button>
-                </form>
+                <!-- Delete tugmasi tashqaridagi formaga bog'landi -->
+                <button type="submit" form="delete-company-form" class="text-sm text-red-500 hover:text-red-700">
+                    Delete company
+                </button>
 
                 <div class="flex items-center gap-3">
-
                     <a href="{{ route('companies.index') }}"
                         class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900">
                         Cancel
@@ -114,11 +108,15 @@
                         class="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
                         Save changes
                     </button>
-
                 </div>
-
             </div>
 
+        </form>
+
+        <form id="delete-company-form" action="{{ route('companies.destroy', $company) }}" method="POST"
+            onsubmit="return confirm('Delete this company?')" class="hidden">
+            @csrf
+            @method('DELETE')
         </form>
 
     </div>
