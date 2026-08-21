@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class ContactService
 {
-    /**
-     * Filtrlangan va paginatsiya qilingan kontaktlar ro'yxatini olish.
-     */
     public function getPaginated(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
         return Contact::query()
@@ -23,9 +20,6 @@ class ContactService
             ->paginate($perPage);
     }
 
-    /**
-     * Yangi kontakt yaratish (xavfsiz tranzaksiya bilan).
-     */
     public function create(array $data, User $user): Contact
     {
         return DB::transaction(function () use ($data, $user) {
@@ -36,9 +30,6 @@ class ContactService
         });
     }
 
-    /**
-     * Mavjud kontaktni yangilash.
-     */
     public function update(Contact $contact, array $data): Contact
     {
         return DB::transaction(function () use ($contact, $data) {
@@ -47,9 +38,6 @@ class ContactService
         });
     }
 
-    /**
-     * Kontaktni o'chirish.
-     */
     public function delete(Contact $contact): void
     {
         DB::transaction(function () use ($contact) {

@@ -1,0 +1,2 @@
+\App\Models\Company::first()->deals;
+\App\Models\Deal::pluck('title', 'company_id');

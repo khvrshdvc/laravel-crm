@@ -30,4 +30,9 @@ class Contact extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
+    }
 }

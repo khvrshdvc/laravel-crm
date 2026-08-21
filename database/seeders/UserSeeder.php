@@ -9,12 +9,8 @@ use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // creates sample users with different roles for development and testing
         User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',

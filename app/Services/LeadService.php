@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\LeadStatus;
+use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -10,9 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class LeadService
 {
-    /**
-     * Filtrlangan va paginatsiya qilingan Lead'lar ro'yxatini olish.
-     */
+   
     public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return Lead::query()
@@ -27,9 +26,6 @@ class LeadService
             ->paginate($perPage);
     }
 
-    /**
-     * Yangi Lead yaratish.
-     */
     public function create(array $data, User $user): Lead
     {
         return DB::transaction(function () use ($data, $user) {
@@ -40,9 +36,6 @@ class LeadService
         });
     }
 
-    /**
-     * Lead ma'lumotlarini yangilash.
-     */
     public function update(Lead $lead, array $data): Lead
     {
         return DB::transaction(function () use ($lead, $data) {
@@ -51,9 +44,6 @@ class LeadService
         });
     }
 
-    /**
-     * Faqat Lead statusini yangilash.
-     */
     public function updateStatus(Lead $lead, LeadStatus $status): Lead
     {
         return DB::transaction(function () use ($lead, $status) {
@@ -64,13 +54,33 @@ class LeadService
         });
     }
 
-    /**
-     * Lead'ni o'chirish.
-     */
     public function delete(Lead $lead): void
     {
         DB::transaction(function () use ($lead) {
             $lead->delete();
+        });
+    }
+
+    public function convertToDeal(
+        Lead $lead,
+        array $dealData,
+        User $user
+    ): Deal {
+        return DB::transaction(function () use ($lead, $dealData, $user) {
+
+            $deal = Deal::create([
+                ...$dealData,
+                'lead_id' => $lead->id,
+                'company_id' => $lead->company_id,
+                'contact_id' => $lead->contact_id,
+                'created_by' => $user->id,
+            ]);
+
+            $lead->update([
+                'status' => LeadStatus::Converted,
+            ]);
+
+            return $deal;
         });
     }
 }

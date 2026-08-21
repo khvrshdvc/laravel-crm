@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\LeadStatus;
+use App\Http\Requests\ConvertLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Models\Company;
 use App\Models\Contact;
@@ -51,11 +52,19 @@ class LeadController extends Controller
             ->with('success', 'Lead muvaffaqiyatli yaratildi.');
     }
 
-    public function show(Lead $lead): View
+    public function show(Lead $lead)
     {
-        $lead->load(['company', 'contact', 'assignedTo', 'createdBy']);
+        $lead->load([
+            'company',
+            'contact',
+            'deal',
+        ]);
 
-        return view('leads.show', compact('lead'));
+        $users = User::query()
+            ->orderBy('name')
+            ->get();
+
+        return view('leads.show', compact('lead', 'users'));
     }
 
     public function edit(Lead $lead): View
@@ -97,5 +106,21 @@ class LeadController extends Controller
         return redirect()
             ->route('leads.index')
             ->with('success', 'Lead muvaffaqiyatli o\'chirildi.');
+    }
+
+    public function convert(
+        ConvertLeadRequest $request,
+        Lead $lead,
+        LeadService $service
+    ) {
+        $deal = $service->convertToDeal(
+            $lead,
+            $request->validated(),
+            $request->user()
+        );
+
+        return redirect()
+            ->route('deals.show', $deal)
+            ->with('success', 'Lead successfully converted to deal!');
     }
 }

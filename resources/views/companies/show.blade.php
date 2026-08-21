@@ -1,21 +1,24 @@
 <x-app-layout>
     <div class="max-w-5xl mx-auto px-6 py-8">
 
+        {{-- Back Button --}}
         <div class="mb-8">
-            <a href="{{ route('companies.index') }}" class="text-sm text-gray-500 hover:text-gray-900">
+            <a href="{{ route('companies.index') }}" class="text-sm text-gray-500 hover:text-gray-900 transition">
                 ← Back to companies
             </a>
         </div>
 
+        {{-- Flash Message --}}
         @if (session('success'))
             <div class="mb-6 px-4 py-3 rounded-lg bg-green-50 text-green-700 text-sm">
                 {{ session('success') }}
             </div>
         @endif
 
+        {{-- Company Header --}}
         <div class="flex items-start justify-between mb-8">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200">
                     <span class="text-lg font-semibold text-gray-700">
                         {{ strtoupper(substr($company->name, 0, 1)) }}
                     </span>
@@ -26,7 +29,7 @@
                         {{ $company->name }}
                     </h1>
                     <p class="mt-1 text-sm text-gray-500">
-                        Company details
+                        Company details & relations
                     </p>
                 </div>
             </div>
@@ -37,10 +40,11 @@
             </a>
         </div>
 
+        {{-- Counter Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
             <div class="bg-white border border-gray-200 rounded-xl p-5">
                 <a href="{{ route('contacts.index', ['company_id' => $company->id]) }}"
-                    class="text-sm text-gray-500 hover:text-blue-600 hover:underline transition">
+                    class="text-sm font-medium text-gray-500 hover:text-blue-600 hover:underline transition">
                     Contacts
                 </a>
                 <p class="mt-2 text-2xl font-semibold text-gray-900">
@@ -50,7 +54,7 @@
 
             <div class="bg-white border border-gray-200 rounded-xl p-5">
                 <a href="{{ route('leads.index', ['company_id' => $company->id]) }}"
-                    class="text-sm text-gray-500 hover:text-blue-600 hover:underline transition">
+                    class="text-sm font-medium text-gray-500 hover:text-blue-600 hover:underline transition">
                     Leads
                 </a>
                 <p class="mt-2 text-2xl font-semibold text-gray-900">
@@ -59,39 +63,43 @@
             </div>
 
             <div class="bg-white border border-gray-200 rounded-xl p-5">
-                <p class="text-sm text-gray-500">Deals</p>
+                <a href="{{ route('deals.index', ['company_id' => $company->id]) }}"
+                    class="text-sm font-medium text-gray-500 hover:text-blue-600 hover:underline transition">
+                    Deals
+                </a>
                 <p class="mt-2 text-2xl font-semibold text-gray-900">
                     {{ $company->deals_count ?? $company->deals->count() }}
                 </p>
             </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-xl">
+        {{-- Company Details --}}
+        <div class="bg-white border border-gray-200 rounded-xl mb-8">
             <div class="px-6 py-5 border-b border-gray-200">
-                <h2 class="font-semibold text-gray-900">Company information</h2>
+                <h2 class="font-semibold text-gray-900">Company Information</h2>
             </div>
 
             <div class="divide-y divide-gray-100">
-                <div class="px-6 py-5 flex justify-between gap-6">
+                <div class="px-6 py-4 flex justify-between gap-6">
                     <span class="text-sm text-gray-500">Name</span>
                     <span class="text-sm font-medium text-gray-900">{{ $company->name }}</span>
                 </div>
 
-                <div class="px-6 py-5 flex justify-between gap-6">
+                <div class="px-6 py-4 flex justify-between gap-6">
                     <span class="text-sm text-gray-500">Email</span>
                     <span class="text-sm text-gray-900">{{ $company->email ?? '—' }}</span>
                 </div>
 
-                <div class="px-6 py-5 flex justify-between gap-6">
+                <div class="px-6 py-4 flex justify-between gap-6">
                     <span class="text-sm text-gray-500">Phone</span>
                     <span class="text-sm text-gray-900">{{ $company->phone ?? '—' }}</span>
                 </div>
 
-                <div class="px-6 py-5 flex justify-between gap-6">
+                <div class="px-6 py-4 flex justify-between gap-6">
                     <span class="text-sm text-gray-500">Website</span>
                     @if ($company->website)
-                        <a href="{{ $company->website }}" target="_blank"
-                            class="text-sm text-gray-900 hover:underline">
+                        <a href="{{ Str::startsWith($company->website, ['http://', 'https://']) ? $company->website : 'https://' . $company->website }}"
+                            target="_blank" class="text-sm text-blue-600 hover:underline">
                             {{ $company->website }}
                         </a>
                     @else
@@ -99,29 +107,31 @@
                     @endif
                 </div>
 
-                <div class="px-6 py-5 flex justify-between gap-6">
+                <div class="px-6 py-4 flex justify-between gap-6">
                     <span class="text-sm text-gray-500">Address</span>
                     <span class="text-sm text-gray-900 text-right">{{ $company->address ?? '—' }}</span>
                 </div>
 
-                <div class="px-6 py-5 flex justify-between gap-6">
+                <div class="px-6 py-4 flex justify-between gap-6">
                     <span class="text-sm text-gray-500">Created</span>
-                    <span class="text-sm text-gray-900">{{ $company->created_at->format('d.m.Y') }}</span>
+                    <span class="text-sm text-gray-900">{{ $company->created_at->format('d.m.Y H:i') }}</span>
                 </div>
             </div>
         </div>
-        {{--
-        <div class="bg-white border border-gray-200 rounded-xl mt-6">
+
+        {{-- Related Contacts --}}
+        <div class="bg-white border border-gray-200 rounded-xl mb-8">
             <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-900">Contacts</h2>
-                <a href="{{ route('contacts.create') }}" class="text-sm text-gray-500 hover:text-gray-900">
+                <a href="{{ route('contacts.create', ['company_id' => $company->id]) }}"
+                    class="text-sm font-medium text-gray-700 hover:text-gray-900">
                     + Add contact
                 </a>
             </div>
 
             @if ($company->contacts->isEmpty())
                 <div class="px-6 py-8 text-center text-sm text-gray-400">
-                    No contacts yet.
+                    No contacts linked to this company yet.
                 </div>
             @else
                 <div class="divide-y divide-gray-100">
@@ -132,15 +142,57 @@
                                     class="text-sm font-medium text-gray-900 hover:underline">
                                     {{ $contact->first_name }} {{ $contact->last_name }}
                                 </a>
-                                <p class="text-xs text-gray-400">{{ $contact->position ?? '—' }}</p>
+                                <p class="text-xs text-gray-500">{{ $contact->position ?? 'No position' }}</p>
                             </div>
-                            <span class="text-sm text-gray-500">{{ $contact->email ?? '—' }}</span>
+                            <div class="text-right">
+                                <span class="text-sm text-gray-600 block">{{ $contact->email ?? '—' }}</span>
+                                <span class="text-xs text-gray-400 block">{{ $contact->phone ?? '' }}</span>
+                            </div>
                         </div>
                     @endforeach
                 </div>
             @endif
         </div>
-        --}}
+
+        {{-- Related Deals --}}
+        <div class="bg-white border border-gray-200 rounded-xl">
+            <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900">Deals</h2>
+                <a href="{{ route('deals.create', ['company_id' => $company->id]) }}"
+                    class="text-sm font-medium text-gray-700 hover:text-gray-900">
+                    + Create deal
+                </a>
+            </div>
+
+            @if ($company->deals->isEmpty())
+                <div class="px-6 py-8 text-center text-sm text-gray-400">
+                    No deals linked to this company yet.
+                </div>
+            @else
+                <div class="divide-y divide-gray-100">
+                    @foreach ($company->deals as $deal)
+                        <div class="px-6 py-4 flex items-center justify-between">
+                            <div>
+                                <a href="{{ route('deals.show', $deal) }}"
+                                    class="text-sm font-medium text-gray-900 hover:underline">
+                                    {{ $deal->title }}
+                                </a>
+                                <p class="text-xs text-gray-500">
+                                    Amount: <span
+                                        class="font-medium text-gray-700">${{ number_format($deal->amount, 2) }}</span>
+                                </p>
+                            </div>
+                            <div>
+                                <span
+                                    class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 uppercase">
+                                    {{ $deal->status->value ?? $deal->status }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
 
     </div>
 </x-app-layout>

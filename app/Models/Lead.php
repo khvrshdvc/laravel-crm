@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeadStatus;
 use App\Traits\HasNotes;
 use App\Traits\HasTasks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,13 @@ class Lead extends Model
         'assigned_to',
         'created_by',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => LeadStatus::class,
+        ];
+    }
 
     public function company()
     {

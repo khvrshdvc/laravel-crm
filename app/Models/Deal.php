@@ -2,21 +2,55 @@
 
 namespace App\Models;
 
-use App\Traits\HasTasks;
+use App\Enums\DealStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Deal extends Model
 {
-    use HasFactory, HasTasks;
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'lead_id',
+        'company_id',
+        'contact_id',
+        'amount',
+        'status',
+        'assigned_to',
+        'created_by',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => DealStatus::class,
+            'amount' => 'decimal:2',
+        ];
+    }
+
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class);
+    }
 
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function lead()
+    public function contact()
     {
-        return $this->belongsTo(Lead::class);
+        return $this->belongsTo(Contact::class);
+    }
+
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

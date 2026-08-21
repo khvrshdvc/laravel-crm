@@ -16,13 +16,13 @@ class StoreLeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => ['required', 'string', 'max:255'],
-            'email'       => ['nullable', 'email', 'max:255'],
-            'phone'       => ['nullable', 'string', 'max:50'],
-            'source'      => ['nullable', 'string', 'max:100'],
-            'status'      => ['required', new Enum(LeadStatus::class)],
-            'company_id'  => ['nullable', 'exists:companies,id'],
-            'contact_id'  => ['nullable', 'exists:contacts,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'source' => ['nullable', 'string', 'max:100'],
+            'status' => ['required', new Enum(LeadStatus::class)],
+            'company_id' => ['nullable', 'exists:companies,id'],
+            'contact_id' => ['nullable', 'exists:contacts,id'],
             'assigned_to' => ['nullable', 'exists:users,id'],
         ];
     }

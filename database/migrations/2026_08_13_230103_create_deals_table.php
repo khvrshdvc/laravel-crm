@@ -16,6 +16,11 @@ return new class extends Migration
 
             $table->string('title');
 
+            $table->foreignId('lead_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
             $table->foreignId('company_id')
                 ->nullable()
                 ->constrained()
@@ -26,9 +31,10 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->decimal('amount', 15, 2)->default(0);
+            $table->decimal('amount', 15, 2)
+                ->nullable();
 
-            $table->string('status')->default('open');
+            $table->string('status')->default('new');
 
             $table->foreignId('assigned_to')
                 ->nullable()
