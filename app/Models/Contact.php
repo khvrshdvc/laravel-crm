@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\HasNotes;
+use App\Traits\HasTasks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contact extends Model
 {
-    use HasFactory, HasNotes;
+    use HasFactory, HasTasks, HasNotes;
 
     protected $fillable = [
         'first_name',

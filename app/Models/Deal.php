@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Enums\DealStatus;
+use App\Traits\HasNotes;
+use App\Traits\HasTasks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Deal extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTasks, HasNotes;
 
     protected $fillable = [
         'title',

@@ -26,7 +26,7 @@
                         First name
                     </label>
 
-                    <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required
+                    <input type="text" id="first_name" name="first_name" value=""
                         class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
 
                     @error('first_name')
@@ -39,7 +39,7 @@
                         Last name
                     </label>
 
-                    <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required
+                    <input type="text" id="last_name" name="last_name" value=""
                         class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
 
                     @error('last_name')
@@ -52,7 +52,7 @@
                         Email
                     </label>
 
-                    <input type="email" id="email" name="email" value="{{ old('email') }}"
+                    <input type="email" id="email" name="email" value=""
                         class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
 
                     @error('email')
@@ -65,12 +65,21 @@
                         Phone
                     </label>
 
-                    <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
+                    <input type="text" id="phone" name="phone" value=""
                         class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
 
                     @error('phone')
                         <p class="mt-1.5 text-sm text-red-500">{{ $message }}</p>
                     @enderror
+                </div>
+
+                <div>
+                    <label for="first_name" class="block text-sm font-medium text-gray-700">
+                        Position
+                    </label>
+
+                    <input type="text" id="position" name="position" value=""
+                        class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
                 </div>
 
                 <div>
@@ -92,6 +101,8 @@
                     @error('company_id')
                         <p class="mt-1.5 text-sm text-red-500">{{ $message }}</p>
                     @enderror
+
+
                 </div>
 
             </div>

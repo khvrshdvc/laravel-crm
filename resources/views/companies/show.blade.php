@@ -41,7 +41,7 @@
         </div>
 
         {{-- Counter Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
             <div class="bg-white border border-gray-200 rounded-xl p-5">
                 <a href="{{ route('contacts.index', ['company_id' => $company->id]) }}"
                     class="text-sm font-medium text-gray-500 hover:text-blue-600 hover:underline transition">
@@ -69,6 +69,16 @@
                 </a>
                 <p class="mt-2 text-2xl font-semibold text-gray-900">
                     {{ $company->deals_count ?? $company->deals->count() }}
+                </p>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-xl p-5">
+                <a href="{{ route('tasks.index', ['company_id' => $company->id]) }}"
+                    class="text-sm font-medium text-gray-500 hover:text-blue-600 hover:underline transition">
+                    Tasks
+                </a>
+                <p class="mt-2 text-2xl font-semibold text-gray-900">
+                    {{ $company->tasks_count ?? $company->tasks->count() }}
                 </p>
             </div>
         </div>
@@ -155,7 +165,7 @@
         </div>
 
         {{-- Related Deals --}}
-        <div class="bg-white border border-gray-200 rounded-xl">
+        <div class="bg-white border border-gray-200 rounded-xl mb-8">
             <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-900">Deals</h2>
                 <a href="{{ route('deals.create', ['company_id' => $company->id]) }}"
@@ -183,9 +193,13 @@
                                 </p>
                             </div>
                             <div>
+                                @php
+                                    $dealStatus =
+                                        $deal->status instanceof \BackedEnum ? $deal->status->value : $deal->status;
+                                @endphp
                                 <span
                                     class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 uppercase">
-                                    {{ $deal->status->value ?? $deal->status }}
+                                    {{ $dealStatus ?? '—' }}
                                 </span>
                             </div>
                         </div>
@@ -194,5 +208,52 @@
             @endif
         </div>
 
+        {{-- Related Tasks --}}
+        <div class="bg-white border border-gray-200 rounded-xl">
+            <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900">Tasks</h2>
+                <a href="{{ route('tasks.create', ['company_id' => $company->id]) }}"
+                    class="text-sm font-medium text-gray-700 hover:text-gray-900">
+                    + Add task
+                </a>
+            </div>
+
+            @if ($company->tasks->isEmpty())
+                <div class="px-6 py-8 text-center text-sm text-gray-400">
+                    No tasks linked to this company yet.
+                </div>
+            @else
+                <div class="divide-y divide-gray-100">
+                    @foreach ($company->tasks as $task)
+                        <div class="px-6 py-4 flex items-center justify-between">
+                            <div>
+                                <a href="{{ route('tasks.show', $task) }}"
+                                    class="text-sm font-medium text-gray-900 hover:underline">
+                                    {{ $task->title }}
+                                </a>
+                                <p class="text-xs text-gray-500">
+                                    {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d.m.Y') : 'No due date' }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                @php
+                                    $statusColors = [
+                                        'pending' => 'bg-gray-100 text-gray-600',
+                                        'in_progress' => 'bg-blue-50 text-blue-700',
+                                        'completed' => 'bg-green-50 text-green-700',
+                                    ];
+                                    $statusValue =
+                                        $task->status instanceof \BackedEnum ? $task->status->value : $task->status;
+                                    $statusClass = $statusColors[$statusValue] ?? 'bg-gray-100 text-gray-600';
+                                @endphp
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $statusClass }}">
+                                    {{ $statusValue ? ucfirst(str_replace('_', ' ', $statusValue)) : '—' }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>

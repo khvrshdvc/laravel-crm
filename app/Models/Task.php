@@ -14,7 +14,6 @@ class Task extends Model
 {
     use HasFactory, HasNotes;
 
-
     protected $fillable = [
         'title',
         'description',
@@ -26,14 +25,16 @@ class Task extends Model
         'taskable_type',
     ];
 
-    public function casts()
-    {
-        return [
-            'status' => TaskStatus::class,
-            'priority' => TaskPriority::class,
-            'dues_date' => 'date'
-        ];
-    }
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'status' => TaskStatus::class,
+        'priority' => TaskPriority::class,
+        'due_date' => 'date',
+    ];
 
     public function assignedUser(): BelongsTo
     {

@@ -17,15 +17,16 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
 
-            $table->morphs('taskable');
+            $table->nullableMorphs('taskable');
 
             $table->foreignId('assigned_to')
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
 
+            $table->string('priority')->default('medium');
             $table->string('status')->default('pending');
-            $table->dateTime('due_at')->nullable();
+            $table->dateTime('due_date')->nullable();
 
             $table->timestamps();
         });

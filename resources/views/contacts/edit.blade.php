@@ -79,6 +79,16 @@
                 </div>
 
                 <div>
+                    <label for="first_name" class="block text-sm font-medium text-gray-700">
+                        Position
+                    </label>
+
+                    <input type="text" id="position" name="position" value="{{ old('position', $contact->position) }}"
+                        class="mt-2 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900">
+                </div>
+
+
+                <div>
                     <label for="company_id" class="block text-sm font-medium text-gray-700">
                         Company
                     </label>
