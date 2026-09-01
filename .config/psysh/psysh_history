@@ -1,2 +1,6 @@
 \App\Models\Company::first()->deals;
 \App\Models\Deal::pluck('title', 'company_id');
+$company = App\Models\Company::first();
+App\Models\Note::where('noteable_id', $company->id)->get();
+$company->notes;
+App\Models\Note::pluck('noteable_id', 'noteable_type');

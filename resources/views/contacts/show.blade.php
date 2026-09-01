@@ -79,7 +79,7 @@
         </div>
 
         {{-- Contact information --}}
-        <div class="bg-white border border-gray-200 rounded-xl">
+        <div class="bg-white border border-gray-200 rounded-xl mb-8">
 
             <div class="px-6 py-5 border-b border-gray-200">
                 <h2 class="font-semibold text-gray-900">
@@ -186,6 +186,10 @@
                 </div>
 
             </div>
+        </div>
+
+        <div>
+            <x-notes-section :noteable="$contact" :notes="$contact->notes" />
         </div>
 
     </div>

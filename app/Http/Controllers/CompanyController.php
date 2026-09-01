@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Services\CompanyService;
 
-
 class CompanyController extends Controller
 {
     public function index()
@@ -32,8 +31,9 @@ class CompanyController extends Controller
 
     public function show(Company $company)
     {
-        $company->loadCount(['contacts', 'leads', 'deals']);
-        $company->load('contacts');
+        $company->loadCount(['contacts','leads','deals','tasks','notes']);
+        $company->load(['contacts','deals','tasks','notes.user']);
+
         return view('companies.show', compact('company'));
     }
 

@@ -49,7 +49,7 @@ class ContactController extends Controller
 
     public function show(Contact $contact): View
     {
-        $contact->load(['company', 'createdBy']);
+        $contact->load(['company', 'createdBy', 'notes.user']); 
 
         return view('contacts.show', compact('contact'));
     }

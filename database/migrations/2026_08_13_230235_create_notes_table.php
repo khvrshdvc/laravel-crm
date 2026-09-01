@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->text('content');
 
-            $table->morphs('notable');
+            $table->morphs('noteable');
 
             $table->foreignId('created_by')
                 ->constrained('users');

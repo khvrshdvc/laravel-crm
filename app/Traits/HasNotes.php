@@ -9,6 +9,6 @@ trait HasNotes
 {
     public function notes(): MorphMany
     {
-        return $this->morphMany(Note::class, 'notable');
+        return $this->morphMany(Note::class, 'noteable');
     }
 }

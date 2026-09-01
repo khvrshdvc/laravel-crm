@@ -1,6 +1,4 @@
 <x-app-layout>
-
-    ```
     <div class="max-w-3xl mx-auto px-6 py-8">
 
         <div class="mb-6">
@@ -279,6 +277,4 @@
             idInput.value = parts[1];
         }
     </script>
-    ```
-
 </x-app-layout>

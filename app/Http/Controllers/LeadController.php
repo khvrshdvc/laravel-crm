@@ -54,11 +54,7 @@ class LeadController extends Controller
 
     public function show(Lead $lead)
     {
-        $lead->load([
-            'company',
-            'contact',
-            'deal',
-        ]);
+        $lead->load(['company', 'contact', 'deal', 'notes.user']);
 
         $users = User::query()
             ->orderBy('name')
@@ -108,11 +104,14 @@ class LeadController extends Controller
             ->with('success', 'Lead muvaffaqiyatli o\'chirildi.');
     }
 
-    public function convert(
-        ConvertLeadRequest $request,
-        Lead $lead,
-        LeadService $service
-    ) {
+    public function showConvertForm(Lead $lead)
+    {
+        $users = User::all();
+        return view('leads.convert', compact('lead', 'users'));
+    }
+
+    public function convert(ConvertLeadRequest $request, Lead $lead, LeadService $service)
+    {
         $deal = $service->convertToDeal(
             $lead,
             $request->validated(),

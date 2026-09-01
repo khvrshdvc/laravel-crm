@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             ContactSeeder::class,
             LeadSeeder::class,
             DealSeeder::class,
+            TaskSeeder::class,
+            NoteSeeder::class,
         ]);
     }
 }

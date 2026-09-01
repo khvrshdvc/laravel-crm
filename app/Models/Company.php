@@ -6,6 +6,8 @@ use App\Traits\HasNotes;
 use App\Traits\HasTasks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Override;
 
 class Company extends Model
 {
@@ -38,5 +40,11 @@ class Company extends Model
     public function deals()
     {
         return $this->hasMany(Deal::class);
+    }
+    
+    
+    public function notes(): MorphMany
+    {
+        return $this->morphMany(Note::class, 'noteable')->latest();
     }
 }

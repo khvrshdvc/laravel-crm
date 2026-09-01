@@ -209,7 +209,7 @@
         </div>
 
         {{-- Related Tasks --}}
-        <div class="bg-white border border-gray-200 rounded-xl">
+        <div class="bg-white border border-gray-200 rounded-xl mb-8">
             <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-900">Tasks</h2>
                 <a href="{{ route('tasks.create', ['company_id' => $company->id]) }}"
@@ -254,6 +254,10 @@
                     @endforeach
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-notes-section :noteable="$company" :notes="$company->notes" />
         </div>
     </div>
 </x-app-layout>

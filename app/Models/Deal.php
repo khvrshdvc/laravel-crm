@@ -55,4 +55,9 @@ class Deal extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function notes()
+    {
+        return $this->morphMany(Note::class, 'noteable')->latest();
+    }
 }

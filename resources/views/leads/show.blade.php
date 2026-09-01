@@ -1,134 +1,117 @@
 <x-app-layout>
-    <div class="max-w-3xl mx-auto px-6 py-8">
+    <div class="max-w-5xl mx-auto px-6 py-8">
 
-        <div class="mb-6">
-            <a href="{{ route('leads.show', $lead) }}"
-                class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-                ← Back to lead details
+        {{-- Back Button --}}
+        <div class="mb-8">
+            <a href="{{ route('leads.index') }}" class="text-sm text-gray-500 hover:text-gray-900 transition">
+                ← Back to leads
             </a>
         </div>
 
-        {{-- Convert to Deal Form --}}
-        @if (($lead->status->value ?? $lead->status) !== 'converted')
-            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-
-                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50/50">
-                    <h2 class="font-semibold text-gray-900 text-lg">
-                        Convert to Deal
-                    </h2>
-
-                    <p class="mt-1 text-sm text-gray-500">
-                        Convert this lead into an active deal in your pipeline.
-                    </p>
-                </div>
-
-                <form method="POST" action="{{ route('leads.convert', $lead) }}" class="p-6">
-                    @csrf
-
-                    <div class="space-y-6">
-
-                        {{-- Deal title --}}
-                        <div>
-                            <label for="deal_title" class="block text-sm font-medium text-gray-700">
-                                Deal Title <span class="text-red-500">*</span>
-                            </label>
-
-                            <input type="text" name="title" id="deal_title" value="{{ old('title', $lead->name) }}"
-                                required
-                                class="mt-2 block w-full px-4 py-2.5 rounded-lg border @error('title') border-red-500 @else border-gray-300 @enderror focus:border-gray-900 focus:ring-gray-900/10 focus:outline-none">
-
-                            @error('title')
-                                <p class="mt-1.5 text-sm text-red-600">
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
-                        {{-- Amount --}}
-                        <div>
-                            <label for="deal_amount" class="block text-sm font-medium text-gray-700">
-                                Deal Amount ($)
-                            </label>
-
-                            <input type="number" name="amount" id="deal_amount" step="0.01" min="0"
-                                value="{{ old('amount') }}" placeholder="0.00"
-                                class="mt-2 block w-full px-4 py-2.5 rounded-lg border @error('amount') border-red-500 @else border-gray-300 @enderror focus:border-gray-900 focus:ring-gray-900/10 focus:outline-none">
-
-                            @error('amount')
-                                <p class="mt-1.5 text-sm text-red-600">
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
-                        {{-- Assigned To --}}
-                        <div>
-                            <label for="deal_assigned_to" class="block text-sm font-medium text-gray-700">
-                                Assigned To
-                            </label>
-
-                            <select name="assigned_to" id="deal_assigned_to"
-                                class="mt-2 block w-full px-4 py-2.5 bg-white rounded-lg border @error('assigned_to') border-red-500 @else border-gray-300 @enderror focus:border-gray-900 focus:ring-gray-900/10 focus:outline-none">
-                                <option value="">Select manager</option>
-
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}" @selected(old('assigned_to', $lead->assigned_to) == $user->id)>
-                                        {{ $user->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-
-                            @error('assigned_to')
-                                <p class="mt-1.5 text-sm text-red-600">
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
-                    </div>
-
-                    {{-- Submit --}}
-                    <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
-                        <a href="{{ route('leads.show', $lead) }}"
-                            class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                            Cancel
-                        </a>
-
-                        <button type="submit"
-                            class="px-5 py-2.5 bg-green-600 text-gray-900 text-sm font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm">
-                            Convert to Deal
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-        @else
-            {{-- Already converted --}}
-            <div class="bg-green-50 border border-green-200 rounded-xl p-6 shadow-sm">
-
-                <div class="flex items-center justify-between flex-wrap gap-4">
-
-                    <div>
-                        <h2 class="font-semibold text-green-900 text-lg">
-                            Lead converted
-                        </h2>
-
-                        <p class="mt-1 text-sm text-green-700">
-                            This lead has already been converted into a deal.
-                        </p>
-                    </div>
-
-                    @if ($lead->deal)
-                        <a href="{{ route('deals.show', $lead->deal) }}"
-                            class="px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm">
-                            View Deal →
-                        </a>
-                    @endif
-
-                </div>
-
+        {{-- Flash Message --}}
+        @if (session('success'))
+            <div class="mb-6 px-4 py-3 rounded-lg bg-green-50 text-green-700 text-sm">
+                {{ session('success') }}
             </div>
         @endif
+
+        {{-- Lead Header --}}
+        <div class="flex items-start justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
+                    <span class="text-lg font-semibold text-blue-600">
+                        {{ strtoupper(substr($lead->name, 0, 1)) }}
+                    </span>
+                </div>
+
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-900">
+                        {{ $lead->name }}
+                    </h1>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Lead details & activity history
+                    </p>
+                </div>
+            </div>
+
+            {{-- Actions --}}
+            <div class="flex items-center gap-3">
+                @if (($lead->status->value ?? $lead->status) !== 'converted')
+                    <a href="{{ route('leads.convert', $lead) }}"
+                        class="px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                        Convert lead
+                    </a>
+                @else
+                    <span
+                        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-green-50 text-green-700 border border-green-200">
+                        ✓ Converted
+                    </span>
+                @endif
+
+                <a href="{{ route('leads.edit', $lead) }}"
+                    class="px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    Edit lead
+                </a>
+            </div>
+        </div>
+
+        {{-- Lead Details --}}
+        <div class="bg-white border border-gray-200 rounded-xl mb-8">
+            <div class="px-6 py-5 border-b border-gray-200">
+                <h2 class="font-semibold text-gray-900">Lead Information</h2>
+            </div>
+
+            <div class="divide-y divide-gray-100">
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Name</span>
+                    <span class="text-sm font-medium text-gray-900">{{ $lead->name }}</span>
+                </div>
+
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Status</span>
+                    @php
+                        $statusValue = $lead->status->value ?? $lead->status;
+                    @endphp
+                    <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 uppercase">
+                        {{ $statusValue ?? '—' }}
+                    </span>
+                </div>
+
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Email</span>
+                    <span class="text-sm text-gray-900">{{ $lead->email ?? '—' }}</span>
+                </div>
+
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Phone</span>
+                    <span class="text-sm text-gray-900">{{ $lead->phone ?? '—' }}</span>
+                </div>
+
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Company</span>
+                    <span class="text-sm text-gray-900">
+                        {{ $lead->company->name ?? '—' }}
+                    </span>
+                </div>
+
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Assigned To</span>
+                    <span class="text-sm text-gray-900">
+                        {{ $lead->assignedTo->name ?? ($lead->user->name ?? 'Unassigned') }}
+                    </span>
+                </div>
+
+                <div class="px-6 py-4 flex justify-between gap-6">
+                    <span class="text-sm text-gray-500">Created</span>
+                    <span class="text-sm text-gray-900">{{ $lead->created_at->format('d.m.Y H:i') }}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Notes Section --}}
+        <div>
+            <x-notes-section :noteable="$lead" :notes="$lead->notes" />
+        </div>
 
     </div>
 </x-app-layout>

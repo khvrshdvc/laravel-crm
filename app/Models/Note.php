@@ -10,10 +10,11 @@ class Note extends Model
     use HasFactory;
 
     protected $fillable = [
-        'body',
+        'content',
         'user_id',
-        'notable_id',
-        'notable_type', 
+        'created_by',
+        'noteable_id',
+        'noteable_type', 
     ];
 
     public function user()
@@ -21,7 +22,7 @@ class Note extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function notable()
+    public function noteable()
     {
         return $this->morphTo();
     }

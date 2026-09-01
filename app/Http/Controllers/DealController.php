@@ -58,13 +58,7 @@ class DealController extends Controller
 
     public function show(Deal $deal)
     {
-        $deal->load([
-            'lead',
-            'company',
-            'contact',
-            'assignedUser',
-            'creator',
-        ]);
+        $deal->load(['lead','company','contact','assignedUser','creator','notes.user']);
 
         return view('deals.show', compact('deal'));
     }
