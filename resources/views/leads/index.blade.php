@@ -36,11 +36,21 @@
                     <option value="lost" @selected(request('status') === 'lost')>Lost</option>
                 </select>
 
+                <select name="assigned_to" onchange="this.form.submit()"
+                    class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    <option value="">All users</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" @selected(request('assigned_to') == $user->id)>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+
                 <button type="submit"
                     class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
                     Search
                 </button>
-                @if (request('search') || request('status'))
+                @if (request('search') || request('status') || request('assigned_to'))
                     <a href="{{ route('leads.index') }}"
                         class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
                         Clear
@@ -118,7 +128,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
-                                    @if (request('search') || request('status'))
+                                    @if (request('search') || request('status') || request('assigned_to'))
                                         <p class="text-gray-500">No leads match your filters.</p>
                                     @else
                                         <p class="text-gray-500">No leads found.</p>

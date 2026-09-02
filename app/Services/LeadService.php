@@ -22,16 +22,20 @@ class LeadService
             ->when(!empty($filters['status']), function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
             })
+            ->when(!empty($filters['assigned_to']), function ($query) use ($filters) {
+                $query->where('assigned_to', $filters['assigned_to']);
+            })
             ->when(!empty($filters['search']), function ($query) use ($filters) {
                 $search = $filters['search'];
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('source', 'like', "%{$search}%");
+                        ->orWhere('phone', 'like', "%{$search}%");
                 });
             })
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function create(array $data, User $user): Lead

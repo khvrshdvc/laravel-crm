@@ -24,11 +24,13 @@ class LeadController extends Controller
     public function index(Request $request): View
     {
         $leads = $this->leadService->getPaginated(
-            filters: $request->only(['company_id', 'status', 'search']),
+            filters: $request->only(['company_id', 'status', 'search', 'assigned_to']),
             perPage: 15
         );
 
-        return view('leads.index', compact('leads'));
+        $users = User::orderBy('name')->get();
+
+        return view('leads.index', compact('leads', 'users'));
     }
 
     public function create(): View

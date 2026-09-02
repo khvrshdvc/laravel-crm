@@ -25,11 +25,16 @@ class TaskController extends Controller
             ->when($request->priority, function ($query, $priority) {
                 $query->where('priority', $priority);
             })
+            ->when($request->assigned_to, function ($query, $user) {
+                $query->where('assigned_to', $user);
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
-        return view('tasks.index', compact('tasks'));
+        $users = User::orderBy('name')->get();
+
+        return view('tasks.index', compact('tasks', 'users'));
     }
 
     public function show(Task $task)

@@ -15,23 +15,18 @@ class DealController extends Controller
 {
     public function index(Request $request)
     {
-        $deals = Deal::with([
-            'company',
-            'contact',
-            'assignedUser',
-        ])
-            ->when($request->search, function ($query, $search) {
-                $query->where('title', 'like', "%{$search}%");
-            })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
-            })
+        $deals = Deal::with(['company', 'contact', 'assignedUser'])
+            ->when($request->search, fn($query, $search) => $query->where('title', 'like', "%{$search}%"))
+            ->when($request->status, fn($query, $status) => $query->where('status', $status))
+            ->when($request->assigned_to, fn($query, $user) => $query->where('assigned_to', $user))
             ->latest()
             ->orderBy('id', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        return view('deals.index', compact('deals'));
+        $users = User::orderBy('name')->get();
+
+        return view('deals.index', compact('deals', 'users'));
     }
 
     public function create(Request $request)
