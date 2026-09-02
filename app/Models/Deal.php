@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Deal extends Model
 {
-    use HasFactory, HasTasks, HasNotes;
+    use HasFactory, HasNotes, HasTasks;
 
     protected $fillable = [
         'title',
@@ -21,6 +21,7 @@ class Deal extends Model
         'status',
         'assigned_to',
         'created_by',
+        'stage',
     ];
 
     protected function casts(): array

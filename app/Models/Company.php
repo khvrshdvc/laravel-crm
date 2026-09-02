@@ -7,11 +7,10 @@ use App\Traits\HasTasks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Override;
 
 class Company extends Model
 {
-    use HasFactory, HasTasks, HasNotes;
+    use HasFactory, HasNotes, HasTasks;
 
     protected $fillable = [
         'name',
@@ -41,8 +40,7 @@ class Company extends Model
     {
         return $this->hasMany(Deal::class);
     }
-    
-    
+
     public function notes(): MorphMany
     {
         return $this->morphMany(Note::class, 'noteable')->latest();

@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="max-w-4xl mx-auto px-6 py-8">
 
-        {{-- Back Button --}}
         <div class="mb-6">
             <a href="{{ route('tasks.index') }}"
                 class="text-sm text-gray-500 hover:text-gray-900 transition flex items-center gap-1">
@@ -9,17 +8,14 @@
             </a>
         </div>
 
-        {{-- Flash Message --}}
         @if (session('success'))
             <div class="mb-6 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Main Card --}}
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
-            {{-- Header --}}
             <div class="px-6 py-5 border-b border-gray-200 bg-gray-50/50">
                 <div class="flex items-start justify-between gap-4">
                     <div>
@@ -55,10 +51,8 @@
                 </div>
             </div>
 
-            {{-- Content --}}
             <div class="p-6 space-y-8">
 
-                {{-- Description --}}
                 <div>
                     <h2 class="text-sm font-semibold text-gray-900">
                         Description
@@ -74,7 +68,6 @@
                     </div>
                 </div>
 
-                {{-- Task Information --}}
                 <div class="border-t border-gray-100 pt-6">
                     <h2 class="text-sm font-semibold text-gray-900 mb-4">
                         Task Information
@@ -82,7 +75,6 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
-                        {{-- Assigned To --}}
                         <div>
                             <p class="text-xs text-gray-500">Assigned To</p>
                             <p class="mt-1 text-sm font-medium text-gray-900">
@@ -90,7 +82,6 @@
                             </p>
                         </div>
 
-                        {{-- Due Date --}}
                         <div>
                             <p class="text-xs text-gray-500">Due Date</p>
                             <p class="mt-1 text-sm font-medium text-gray-900">
@@ -98,7 +89,6 @@
                             </p>
                         </div>
 
-                        {{-- Priority --}}
                         <div>
                             <p class="text-xs text-gray-500">Priority</p>
                             @php
@@ -119,7 +109,6 @@
                             </span>
                         </div>
 
-                        {{-- Status --}}
                         <div>
                             <p class="text-xs text-gray-500">Status</p>
                             @php
@@ -143,7 +132,6 @@
                     </div>
                 </div>
 
-                {{-- Related To --}}
                 <div class="border-t border-gray-100 pt-6">
                     <h2 class="text-sm font-semibold text-gray-900 mb-4">
                         Related To
@@ -202,7 +190,6 @@
                     @endif
                 </div>
 
-                {{-- Timestamps --}}
                 <div class="border-t border-gray-100 pt-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>

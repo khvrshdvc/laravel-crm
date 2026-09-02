@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
+use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\Task;
 use App\Models\User;
@@ -20,7 +21,9 @@ class TaskTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->create([
+            'role' => UserRole::Admin,
+        ]);
     }
 
     public function test_user_can_view_tasks_list(): void
@@ -39,7 +42,7 @@ class TaskTest extends TestCase
             'description' => 'Yangi modul bo\'yicha texnik topshiriqni tahlil qilish',
             'status' => TaskStatus::cases()[0]->value,
             'priority' => TaskPriority::cases()[0]->value,
-            'taskable_type' => 'company', // Validatsiyadan o'tadigan ruxsat berilgan qiymat
+            'taskable_type' => 'company',
             'taskable_id' => $company->id,
             'assigned_to' => $this->user->id,
             'due_date' => now()->addDays(3)->format('Y-m-d'),
@@ -54,6 +57,7 @@ class TaskTest extends TestCase
             'title' => 'Loyiha arxitekturasini ko\'rib chiqish',
             'taskable_id' => $company->id,
             'taskable_type' => 'company',
+            'assigned_to' => $this->user->id,
         ]);
     }
 
@@ -62,6 +66,7 @@ class TaskTest extends TestCase
         $task = Task::factory()->create([
             'title' => 'Muhim muloqot o\'tkazish',
             'description' => 'Mijoz bilan shartnoma shartlarini kelishish',
+            'assigned_to' => $this->user->id,
         ]);
 
         $response = $this->actingAs($this->user)->get(route('tasks.show', $task));
@@ -75,6 +80,7 @@ class TaskTest extends TestCase
     {
         $task = Task::factory()->create([
             'title' => 'Eski topshiriq sarlavhasi',
+            'assigned_to' => $this->user->id,
         ]);
 
         $newCompany = Company::factory()->create();
@@ -100,12 +106,15 @@ class TaskTest extends TestCase
             'title' => 'Yangilangan topshiriq sarlavhasi',
             'taskable_id' => $newCompany->id,
             'taskable_type' => 'company',
+            'assigned_to' => $this->user->id,
         ]);
     }
 
     public function test_user_can_delete_task(): void
     {
-        $task = Task::factory()->create();
+        $task = Task::factory()->create([
+            'assigned_to' => $this->user->id,
+        ]);
 
         $response = $this->actingAs($this->user)->delete(route('tasks.destroy', $task));
 

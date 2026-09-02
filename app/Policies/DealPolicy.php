@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Enums\UserRole;
-use App\Models\User;
 use App\Models\Deal;
+use App\Models\User;
 
 class DealPolicy
 {

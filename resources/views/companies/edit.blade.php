@@ -15,7 +15,6 @@
             </p>
         </div>
 
-        <!-- ASOSIY UPDATE FORMASI -->
         <form action="{{ route('companies.update', $company) }}" method="POST"
             class="bg-white border border-gray-200 rounded-xl p-6" novalidate>
 
@@ -93,7 +92,6 @@
             </div>
 
             <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
-                <!-- Delete tugmasi tashqaridagi formaga bog'landi -->
                 <button type="submit" form="delete-company-form" class="text-sm text-red-500 hover:text-red-700">
                     Delete company
                 </button>

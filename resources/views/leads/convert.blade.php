@@ -8,7 +8,6 @@
             </a>
         </div>
 
-        {{-- Convert to Deal Form --}}
         @if (($lead->status->value ?? $lead->status) !== 'converted')
             <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
 
@@ -26,8 +25,6 @@
                     @csrf
 
                     <div class="space-y-6">
-
-                        {{-- Deal title --}}
                         <div>
                             <label for="deal_title" class="block text-sm font-medium text-gray-700">
                                 Deal Title <span class="text-red-500">*</span>
@@ -44,7 +41,6 @@
                             @enderror
                         </div>
 
-                        {{-- Amount --}}
                         <div>
                             <label for="deal_amount" class="block text-sm font-medium text-gray-700">
                                 Deal Amount ($)
@@ -61,7 +57,6 @@
                             @enderror
                         </div>
 
-                        {{-- Assigned To --}}
                         <div>
                             <label for="deal_assigned_to" class="block text-sm font-medium text-gray-700">
                                 Assigned To
@@ -87,7 +82,6 @@
 
                     </div>
 
-                    {{-- Submit --}}
                     <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
                         <a href="{{ route('leads.show', $lead) }}"
                             class="px-4 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
@@ -103,7 +97,6 @@
                 </form>
             </div>
         @else
-            {{-- Already converted --}}
             <div class="bg-green-50 border border-green-200 rounded-xl p-6 shadow-sm">
 
                 <div class="flex items-center justify-between flex-wrap gap-4">

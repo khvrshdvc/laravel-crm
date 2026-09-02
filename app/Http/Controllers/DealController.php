@@ -4,112 +4,113 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
-use App\Models\Company;
-use App\Models\Contact;
 use App\Models\Deal;
-use App\Models\User;
 use App\Services\DealService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class DealController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected DealService $dealService
+    ) {}
+
+    // Retrieve paginated deals with search and filters
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Deal::class);
 
-        $deals = Deal::with(['company', 'contact', 'assignedUser'])
-            ->when($request->search, fn($query, $search) => $query->where('title', 'like', "%{$search}%"))
-            ->when($request->status, fn($query, $status) => $query->where('status', $status))
-            ->when($request->assigned_to, fn($query, $user) => $query->where('assigned_to', $user))
-            ->latest()
-            ->orderBy('id', 'desc')
-            ->paginate(10)
-            ->withQueryString();
+        $deals = $this->dealService->getPaginatedDeals(
+            filters: $request->only(['search', 'status', 'assigned_to']),
+            perPage: 10
+        );
 
-        $users = User::orderBy('name')->get();
+        $formData = $this->dealService->getFormDataOptions();
+        $users = $formData['users'];
 
         return view('deals.index', compact('deals', 'users'));
     }
 
-    public function create(Request $request)
+    // Show form to create a new deal
+    public function create(Request $request): View
     {
         $this->authorize('create', Deal::class);
 
-        $companies = Company::query()->orderBy('name')->get();
-        $contacts  = Contact::query()->orderBy('first_name')->get();
-        $users     = User::query()->orderBy('name')->get();
-
-
+        $options = $this->dealService->getFormDataOptions();
         $selectedCompanyId = $request->query('company_id');
         $selectedContactId = $request->query('contact_id');
 
-        return view('deals.create', compact(
-            'companies',
-            'contacts',
-            'users',
-            'selectedCompanyId',
-            'selectedContactId'
-        ));
+        return view('deals.create', [
+            'companies' => $options['companies'],
+            'contacts' => $options['contacts'],
+            'users' => $options['users'],
+            'selectedCompanyId' => $selectedCompanyId,
+            'selectedContactId' => $selectedContactId,
+        ]);
     }
 
-    public function store(StoreDealRequest $request, DealService $service)
+    // Store a new deal record
+    public function store(StoreDealRequest $request): RedirectResponse
     {
         $this->authorize('create', Deal::class);
 
-        $deal = $service->create(
+        $deal = $this->dealService->create(
             $request->validated(),
             $request->user()
         );
 
         return redirect()
             ->route('deals.show', $deal)
-            ->with('success', 'Deal created successfully!');
+            ->with('success', 'Deal created successfully.');
     }
 
-    public function show(Deal $deal)
+    // Display deal details
+    public function show(Deal $deal): View
     {
         $this->authorize('view', $deal);
 
-        $deal->load(['lead', 'company', 'contact', 'assignedUser', 'creator', 'notes.user']);
+        $deal = $this->dealService->getDealDetails($deal);
 
         return view('deals.show', compact('deal'));
     }
 
-    public function edit(Deal $deal)
+    // Show form to edit an existing deal
+    public function edit(Deal $deal): View
     {
         $this->authorize('update', $deal);
 
-        $companies = Company::query()->orderBy('name')->get();
-        $contacts  = Contact::query()->orderBy('first_name')->get();
-        $users     = User::query()->orderBy('name')->get();
+        $options = $this->dealService->getFormDataOptions();
 
-        return view('deals.edit', compact('deal', 'companies', 'contacts', 'users'));
+        return view('deals.edit', [
+            'deal' => $deal,
+            'companies' => $options['companies'],
+            'contacts' => $options['contacts'],
+            'users' => $options['users'],
+        ]);
     }
 
-    public function update(UpdateDealRequest $request, Deal $deal, DealService $service)
+    // Update deal details
+    public function update(UpdateDealRequest $request, Deal $deal): RedirectResponse
     {
         $this->authorize('update', $deal);
 
-        $service->update(
-            $deal,
-            $request->validated()
-        );
+        $this->dealService->update($deal, $request->validated());
 
         return redirect()
             ->route('deals.show', $deal)
-            ->with('succes', 'Deal updated successfully!');
+            ->with('success', 'Deal updated successfully.');
     }
 
-    public function destroy(
-        Deal $deal,
-        DealService $service
-    ) {
+    // Delete a deal record
+    public function destroy(Deal $deal): RedirectResponse
+    {
         $this->authorize('delete', $deal);
 
-        $service->delete($deal);
+        $this->dealService->delete($deal);
 
         return redirect()
             ->route('deals.index')
-            ->with('success', 'Deal deleted successfully!');
+            ->with('success', 'Deal deleted successfully.');
     }
 }

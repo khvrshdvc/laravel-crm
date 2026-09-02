@@ -6,39 +6,43 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Models\Note;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 
 class NoteController extends Controller
 {
-    public function store(StoreNoteRequest $request)
+    // Store a new note for a polymorphic relation
+    public function store(StoreNoteRequest $request): RedirectResponse
     {
+        $this->authorize('create', Note::class);
+
         $validated = $request->validated();
 
-        
         Note::create([
-            'content'       => $validated['content'],
+            'content' => $validated['content'],
             'noteable_type' => $validated['noteable_type'],
-            'noteable_id'   => $validated['noteable_id'],
-            'created_by'       => Auth::id(), 
+            'noteable_id' => $validated['noteable_id'],
+            'created_by' => $request->user()->id,
         ]);
 
-        return back()->with('success', 'Note qo\'shildi!');
+        return back()->with('success', 'Note created successfully.');
     }
+
+    // Update an existing note content
     public function update(UpdateNoteRequest $request, Note $note): RedirectResponse
     {
-        $validated = $request->validated();
+        $this->authorize('update', $note);
 
-        $note->update([
-            'content' => $validated['content'],
-        ]);
+        $note->update($request->validated());
 
-        return redirect()->back()->with('success', 'Izoh muvaffaqiyatli yangilandi.');
+        return back()->with('success', 'Note updated successfully.');
     }
 
+    // Delete a note
     public function destroy(Note $note): RedirectResponse
     {
+        $this->authorize('delete', $note);
+
         $note->delete();
 
-        return redirect()->back()->with('success', 'Izoh o\'chirildi.');
+        return back()->with('success', 'Note deleted successfully.');
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Enums\UserRole;
-use App\Models\User;
 use App\Models\Lead;
+use App\Models\User;
 
 class LeadPolicy
 {

@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Stat cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-5">
                     <p class="text-xs text-gray-400">Companies</p>
@@ -40,7 +39,6 @@
                 </div>
             </div>
 
-            {{-- Recent Leads & Today's Tasks --}}
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <h3 class="font-semibold text-gray-900 mb-4">Recent Leads</h3>

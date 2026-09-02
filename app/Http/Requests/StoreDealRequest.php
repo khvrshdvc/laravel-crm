@@ -19,8 +19,8 @@ class StoreDealRequest extends FormRequest
             'company_id' => ['nullable', 'exists:companies,id'],
             'contact_id' => ['nullable', 'exists:contacts,id'],
             'amount' => ['nullable', 'numeric', 'min:0'],
-            'status' => ['nullable','string','in:new,qualified,proposal,negotiation,won,lost'],
-            'assigned_to' => ['nullable','exists:users,id'],
+            'status' => ['nullable', 'string', 'in:new,qualified,proposal,negotiation,won,lost'],
+            'assigned_to' => ['nullable', 'exists:users,id'],
         ];
     }
 }

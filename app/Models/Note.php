@@ -13,7 +13,7 @@ class Note extends Model
         'content',
         'created_by',
         'noteable_id',
-        'noteable_type', 
+        'noteable_type',
     ];
 
     public function user()

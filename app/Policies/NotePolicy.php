@@ -16,6 +16,11 @@ class NotePolicy
         return null;
     }
 
+    public function create(User $user): bool
+    {
+        return true; 
+    }
+
     public function update(User $user, Note $note): bool
     {
         return $user->id === $note->created_by;

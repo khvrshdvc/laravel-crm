@@ -2,100 +2,110 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
-use App\Models\User;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Company;
 use App\Models\Deal;
 use App\Models\Lead;
-use App\Http\Requests\StoreTaskRequest;
-use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Task;
+use App\Models\User;
+use App\Services\TaskService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Laravel\Prompts\Task as PromptsTask;
+use Illuminate\View\View;
 
 class TaskController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected TaskService $taskService
+    ) {}
+
+    // Retrieve paginated tasks with search and filters
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Task::class);
 
-        $tasks = Task::with(['assignedUser', 'taskable'])
-            ->when($request->search, function ($query, $search) {
-                $query->where('title', 'like', "%{$search}%");
-            })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
-            })
-            ->when($request->priority, function ($query, $priority) {
-                $query->where('priority', $priority);
-            })
-            ->when($request->assigned_to, function ($query, $user) {
-                $query->where('assigned_to', $user);
-            })
+        $tasks = Task::query()
+            ->with([
+                'assignedUser:id,name',
+                'taskable' => function ($morphTo) {
+                    $morphTo->morphWith([
+                        Company::class => ['id', 'name'],
+                        Lead::class => ['id', 'name'],
+                        Deal::class => ['id', 'title'],
+                    ]);
+                },
+            ])
+            ->when($request->search, fn($query, $search) => $query->where('title', 'like', "%{$search}%"))
+            ->when($request->status, fn($query, $status) => $query->where('status', $status))
+            ->when($request->priority, fn($query, $priority) => $query->where('priority', $priority))
+            ->when($request->assigned_to, fn($query, $user) => $query->where('assigned_to', $user))
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
-        $users = User::orderBy('name')->get();
+        $users = User::select('id', 'name')->orderBy('name')->get();
 
         return view('tasks.index', compact('tasks', 'users'));
     }
 
-    public function show(Task $task)
+    // Display task details
+    public function show(Task $task): View
     {
         $this->authorize('view', $task);
 
-        $task->load(['assignedUser', 'taskable']);
+        $task->load([
+            'assignedUser:id,name',
+            'taskable',
+        ]);
 
         return view('tasks.show', compact('task'));
     }
 
-    public function create()
+    // Show form to create a new task
+    public function create(): View
     {
         $this->authorize('create', Task::class);
 
-        $users = User::select('id', 'name')->orderBy('name')->get();
-        $companies = Company::select('id', 'name')->orderBy('name')->get();
-        $leads = Lead::select('id', 'name')->orderBy('name')->get();
-        $deals = Deal::select('id', 'title as name')->orderBy('title')->get();
-
-        return view('tasks.create', compact('users', 'companies', 'leads', 'deals'));
+        return view('tasks.create', $this->taskService->getFormDataOptions());
     }
 
-    public function store(StoreTaskRequest $request)
+    // Store a new task record
+    public function store(StoreTaskRequest $request): RedirectResponse
     {
         $this->authorize('create', Task::class);
 
-        Task::create($request->validated());
+        $this->taskService->create($request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 
-    public function edit(Task $task)
+    // Show form to edit an existing task
+    public function edit(Task $task): View
     {
         $this->authorize('update', $task);
 
-        $users = User::select('id', 'name')->orderBy('name')->get();
-        $companies = Company::select('id', 'name')->orderBy('name')->get();
-        $leads = Lead::select('id', 'name')->orderBy('name')->get();
-        $deals = Deal::select('id', 'title as name')->orderBy('title')->get();
+        $options = array_merge(['task' => $task], $this->taskService->getFormDataOptions());
 
-        return view('tasks.edit', compact('task', 'users', 'companies', 'leads', 'deals'));
+        return view('tasks.edit', $options);
     }
 
-    public function update(UpdateTaskRequest $request, Task $task)
+    // Update task details
+    public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
         $this->authorize('update', $task);
 
-        $task->update($request->validated());
+        $this->taskService->update($task, $request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
     }
 
-    public function destroy(Task $task)
+    // Delete a task record
+    public function destroy(Task $task): RedirectResponse
     {
         $this->authorize('delete', $task);
 
-        $task->delete();
+        $this->taskService->delete($task);
 
         return back()->with('success', 'Task deleted successfully.');
     }

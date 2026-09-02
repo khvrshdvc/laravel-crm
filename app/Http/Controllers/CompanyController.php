@@ -6,64 +6,82 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Services\CompanyService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CompanyController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        protected CompanyService $companyService
+    ) {}
+
+    // Retrieve paginated companies with search
+    public function index(Request $request): View
     {
-        $companies = Company::query()
-            ->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+        $this->authorize('viewAny', Company::class);
+
+        $companies = $this->companyService->getPaginatedCompanies($request->search);
 
         return view('companies.index', compact('companies'));
     }
 
-    public function create()
+    // Show form to create a new company
+    public function create(): View
     {
+        $this->authorize('create', Company::class);
+
         return view('companies.create');
     }
 
-    public function store(StoreCompanyRequest $request, CompanyService $service)
+    // Store a new company record
+    public function store(StoreCompanyRequest $request): RedirectResponse
     {
-        $company = $service->create($request->validated(), $request->user());
+        $this->authorize('create', Company::class);
+
+        $company = $this->companyService->create($request->validated(), $request->user());
 
         return redirect()->route('companies.show', $company)
-            ->with('success', 'Company created!');
+            ->with('success', 'Company created successfully.');
     }
 
-    public function show(Company $company)
+    // Display company details
+    public function show(Company $company): View
     {
-        $company->loadCount(['contacts', 'leads', 'deals', 'tasks', 'notes']);
-        $company->load(['contacts', 'deals', 'tasks', 'notes.user']);
+        $this->authorize('view', $company);
+
+        $company = $this->companyService->getCompanyDetails($company);
 
         return view('companies.show', compact('company'));
     }
 
-    public function edit(Company $company)
+    // Show form to edit an existing company
+    public function edit(Company $company): View
     {
+        $this->authorize('update', $company);
+
         return view('companies.edit', compact('company'));
     }
 
-    public function update(UpdateCompanyRequest $request, Company $company)
+    // Update company details
+    public function update(UpdateCompanyRequest $request, Company $company): RedirectResponse
     {
-        $company->update($request->validated());
+        $this->authorize('update', $company);
+
+        $this->companyService->update($company, $request->validated());
 
         return redirect()->route('companies.show', $company)
-            ->with('success', 'Company updated!');
+            ->with('success', 'Company updated successfully.');
     }
 
-    public function destroy(Company $company)
+    // Delete a company record
+    public function destroy(Company $company): RedirectResponse
     {
-        $company->delete();
+        $this->authorize('delete', $company);
+
+        $this->companyService->delete($company);
 
         return redirect()->route('companies.index')
-            ->with('success', 'Company deleted!');
+            ->with('success', 'Company deleted successfully.');
     }
 }

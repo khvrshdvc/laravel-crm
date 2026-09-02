@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="max-w-5xl mx-auto px-6 py-8">
 
-        {{-- Back Button --}}
         <div class="mb-8">
             <a href="{{ route('contacts.index') }}"
                 class="text-sm text-gray-500 hover:text-gray-900 transition flex items-center gap-1">
@@ -9,14 +8,12 @@
             </a>
         </div>
 
-        {{-- Flash Message --}}
         @if (session('success'))
             <div class="mb-6 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Header Section --}}
         <div class="flex items-start justify-between mb-8">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200">
@@ -43,7 +40,6 @@
             @endcan
         </div>
 
-        {{-- Summary Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
             <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
                 <p class="text-sm font-medium text-gray-500">Company</p>
@@ -74,7 +70,6 @@
             </div>
         </div>
 
-        {{-- Contact Details Table --}}
         <div class="bg-white border border-gray-200 rounded-xl mb-8 shadow-sm">
             <div class="px-6 py-5 border-b border-gray-200">
                 <h2 class="font-semibold text-gray-900">Contact information</h2>
@@ -137,7 +132,6 @@
             </div>
         </div>
 
-        {{-- Notes Section Component --}}
         <div>
             <x-notes-section :noteable="$contact" :notes="$contact->notes" />
         </div>

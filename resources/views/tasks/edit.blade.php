@@ -19,7 +19,6 @@
                 @csrf
                 @method('PUT')
 
-                {{-- Title --}}
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700">
                         Task Title
@@ -38,7 +37,6 @@
                     @enderror
                 </div>
 
-                {{-- Description --}}
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700">
                         Description
@@ -54,7 +52,6 @@
                     @enderror
                 </div>
 
-                {{-- Related To --}}
                 <div>
                     <label for="related_to" class="block text-sm font-medium text-gray-700">
                         Related To
@@ -78,7 +75,6 @@
                             None (General Task)
                         </option>
 
-                        {{-- Companies --}}
                         @if ($companies->count())
                             <optgroup label="Companies">
 
@@ -91,7 +87,6 @@
                             </optgroup>
                         @endif
 
-                        {{-- Leads --}}
                         @if ($leads->count())
                             <optgroup label="Leads">
 
@@ -104,7 +99,6 @@
                             </optgroup>
                         @endif
 
-                        {{-- Deals --}}
                         @if ($deals->count())
                             <optgroup label="Deals">
 
@@ -132,10 +126,8 @@
                     @enderror
                 </div>
 
-                {{-- Assigned To + Due Date --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {{-- Assigned To --}}
                     <div>
                         <label for="assigned_to" class="block text-sm font-medium text-gray-700">
                             Assign To
@@ -162,7 +154,6 @@
                         @enderror
                     </div>
 
-                    {{-- Due Date --}}
                     <div>
                         <label for="due_date" class="block text-sm font-medium text-gray-700">
                             Due Date
@@ -181,10 +172,8 @@
 
                 </div>
 
-                {{-- Priority + Status --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {{-- Priority --}}
                     <div>
                         <label for="priority" class="block text-sm font-medium text-gray-700">
                             Priority
@@ -207,9 +196,7 @@
                                 {{ $message }}
                             </p>
                         @enderror
-                    </div>
 
-                    {{-- Status --}}
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700">
                             Status
@@ -236,7 +223,6 @@
 
                 </div>
 
-                {{-- Buttons --}}
                 <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
 
                     <a href="{{ route('tasks.index') }}"

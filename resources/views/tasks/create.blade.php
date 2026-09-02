@@ -18,7 +18,6 @@
             <form action="{{ route('tasks.store') }}" method="POST" class="p-6 space-y-6">
                 @csrf
 
-                {{-- Title --}}
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700">
                         Task Title
@@ -37,7 +36,6 @@
                     @enderror
                 </div>
 
-                {{-- Description --}}
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700">
                         Description
@@ -55,7 +53,6 @@
                     @enderror
                 </div>
 
-                {{-- Related To --}}
                 <div class="border-t border-gray-100 pt-6">
 
                     <h3 class="text-sm font-semibold text-gray-900 mb-4">
@@ -63,8 +60,6 @@
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        {{-- Type --}}
                         <div>
                             <label for="taskable_type" class="block text-sm font-medium text-gray-700">
                                 Related Type
@@ -96,12 +91,8 @@
                             @enderror
                         </div>
 
-                        {{-- Related Item --}}
                         <div>
-
-                            {{-- Company --}}
                             <div id="company-select" class="hidden">
-
                                 <label for="company_id" class="block text-sm font-medium text-gray-700">
                                     Company
                                 </label>
@@ -120,7 +111,6 @@
 
                             </div>
 
-                            {{-- Lead --}}
                             <div id="lead-select" class="hidden">
 
                                 <label for="lead_id" class="block text-sm font-medium text-gray-700">
@@ -141,7 +131,6 @@
 
                             </div>
 
-                            {{-- Deal --}}
                             <div id="deal-select" class="hidden">
 
                                 <label for="deal_id" class="block text-sm font-medium text-gray-700">
@@ -162,7 +151,6 @@
 
                             </div>
 
-                            {{-- No relation --}}
                             <div id="no-related" class="mt-8 text-sm text-gray-400">
                                 Select a type
                             </div>
@@ -179,10 +167,8 @@
 
                 </div>
 
-                {{-- Assigned To + Due Date --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {{-- Assigned To --}}
                     <div>
                         <label for="assigned_to" class="block text-sm font-medium text-gray-700">
                             Assign To
@@ -210,7 +196,6 @@
                         @enderror
                     </div>
 
-                    {{-- Due Date --}}
                     <div>
                         <label for="due_date" class="block text-sm font-medium text-gray-700">
                             Due Date
@@ -229,10 +214,8 @@
 
                 </div>
 
-                {{-- Priority + Status --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    {{-- Priority --}}
                     <div>
                         <label for="priority" class="block text-sm font-medium text-gray-700">
                             Priority
@@ -257,7 +240,6 @@
                         @enderror
                     </div>
 
-                    {{-- Status --}}
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700">
                             Status
@@ -284,7 +266,6 @@
 
                 </div>
 
-                {{-- Buttons --}}
                 <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
 
                     <a href="{{ route('tasks.index') }}"

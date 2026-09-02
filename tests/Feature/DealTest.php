@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\DealStatus;
+use App\Enums\UserRole;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Deal;
@@ -20,7 +21,10 @@ class DealTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        // 403 Forbidden xatosini oldini olish uchun foydalanuvchini Admin roli bilan yaratamiz
+        $this->user = User::factory()->create([
+            'role' => UserRole::Admin,
+        ]);
     }
 
     public function test_user_can_view_deals_list(): void
@@ -64,6 +68,8 @@ class DealTest extends TestCase
 
         $deal = Deal::factory()->create([
             'contact_id' => $contact->id,
+            'created_by' => $this->user->id,
+            'assigned_to' => $this->user->id,
         ]);
 
         $response = $this->actingAs($this->user)->get(route('deals.show', $deal));
@@ -75,7 +81,11 @@ class DealTest extends TestCase
 
     public function test_user_can_update_deal(): void
     {
-        $deal = Deal::factory()->create(['title' => 'Old Deal Title']);
+        $deal = Deal::factory()->create([
+            'title' => 'Old Deal Title',
+            'created_by' => $this->user->id,
+            'assigned_to' => $this->user->id,
+        ]);
         $newContact = Contact::factory()->create();
 
         $updateData = [
@@ -98,7 +108,10 @@ class DealTest extends TestCase
 
     public function test_user_can_delete_deal(): void
     {
-        $deal = Deal::factory()->create();
+        $deal = Deal::factory()->create([
+            'created_by' => $this->user->id,
+            'assigned_to' => $this->user->id,
+        ]);
 
         $response = $this->actingAs($this->user)->delete(route('deals.destroy', $deal));
 

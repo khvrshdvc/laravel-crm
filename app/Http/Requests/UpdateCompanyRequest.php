@@ -21,5 +21,4 @@ class UpdateCompanyRequest extends FormRequest
             'address' => ['nullable', 'string'],
         ];
     }
-
 }

@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-6 py-8">
 
-        {{-- Header Section --}}
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-2xl font-semibold text-gray-900">Tasks</h1>
@@ -18,14 +17,12 @@
             @endcan
         </div>
 
-        {{-- Flash Success Message --}}
         @if (session('success'))
             <div class="mb-6 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Search & Filters --}}
         <form method="GET" action="{{ route('tasks.index') }}" class="mb-6">
             <div class="flex flex-wrap gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title..."
@@ -71,7 +68,6 @@
             </div>
         </form>
 
-        {{-- Table Container --}}
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -91,7 +87,6 @@
                         @forelse($tasks as $task)
                             <tr class="hover:bg-gray-50 transition">
 
-                                {{-- Title --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a href="{{ route('tasks.show', $task) }}"
                                         class="font-medium text-gray-900 hover:underline">
@@ -99,7 +94,6 @@
                                     </a>
                                 </td>
 
-                                {{-- Polymorphic Relationship (Related To) --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
                                     @if ($task->taskable)
                                         @php
@@ -128,12 +122,10 @@
                                     @endif
                                 </td>
 
-                                {{-- Assigned User --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
                                     {{ $task->assignedUser?->name ?? 'Unassigned' }}
                                 </td>
 
-                                {{-- Due Date (Highlights Overdue Tasks) --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
                                     @if ($task->due_date)
                                         @php
@@ -149,7 +141,6 @@
                                     @endif
                                 </td>
 
-                                {{-- Priority (Dynamic Colors) --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $priorityValue = $task->priority->value ?? $task->priority;
@@ -166,7 +157,6 @@
                                     </span>
                                 </td>
 
-                                {{-- Status (Dynamic Colors) --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $statusValue = $task->status->value ?? $task->status;
@@ -183,7 +173,6 @@
                                     </span>
                                 </td>
 
-                                {{-- Actions --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
                                     <div class="flex justify-end items-center gap-3">
                                         @can('update', $task)
@@ -232,7 +221,6 @@
             </div>
         </div>
 
-        {{-- Pagination --}}
         <div class="mt-6">
             {{ $tasks->links() }}
         </div>

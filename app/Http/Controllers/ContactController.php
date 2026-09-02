@@ -4,21 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
-use App\Models\Company;
 use App\Models\Contact;
 use App\Services\ContactService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-
 class ContactController extends Controller
 {
-
     public function __construct(
         protected ContactService $contactService
     ) {}
 
+    // Retrieve paginated contacts with filters and search
     public function index(Request $request): View
     {
         $this->authorize('viewAny', Contact::class);
@@ -31,15 +29,17 @@ class ContactController extends Controller
         return view('contacts.index', compact('contacts'));
     }
 
+    // Show form to create a new contact
     public function create(): View
     {
         $this->authorize('create', Contact::class);
 
-        $companies = Company::select('id', 'name')->orderBy('name')->get();
+        $companies = $this->contactService->getCompanyOptions();
 
         return view('contacts.create', compact('companies'));
     }
 
+    // Store a new contact record
     public function store(StoreContactRequest $request): RedirectResponse
     {
         $this->authorize('create', Contact::class);
@@ -51,27 +51,30 @@ class ContactController extends Controller
 
         return redirect()
             ->route('contacts.show', $contact)
-            ->with('success', 'Kontakt muvaffaqiyatli yaratildi.');
+            ->with('success', 'Contact created successfully.');
     }
 
+    // Display contact details with relations
     public function show(Contact $contact): View
     {
         $this->authorize('view', $contact);
 
-        $contact->load(['company', 'createdBy', 'notes.user']);
+        $contact = $this->contactService->getContactDetails($contact);
 
         return view('contacts.show', compact('contact'));
     }
 
+    // Show form to edit an existing contact
     public function edit(Contact $contact): View
     {
         $this->authorize('update', $contact);
 
-        $companies = Company::select('id', 'name')->orderBy('name')->get();
+        $companies = $this->contactService->getCompanyOptions();
 
         return view('contacts.edit', compact('contact', 'companies'));
     }
 
+    // Update contact details
     public function update(UpdateContactRequest $request, Contact $contact): RedirectResponse
     {
         $this->authorize('update', $contact);
@@ -80,9 +83,10 @@ class ContactController extends Controller
 
         return redirect()
             ->route('contacts.show', $contact)
-            ->with('success', 'Kontakt muvaffaqiyatli yangilandi.');
+            ->with('success', 'Contact updated successfully.');
     }
 
+    // Delete a contact record
     public function destroy(Contact $contact): RedirectResponse
     {
         $this->authorize('delete', $contact);
@@ -91,6 +95,6 @@ class ContactController extends Controller
 
         return redirect()
             ->route('contacts.index')
-            ->with('success', 'Kontakt muvaffaqiyatli o\'chirildi.');
+            ->with('success', 'Contact deleted successfully.');
     }
 }

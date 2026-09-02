@@ -18,28 +18,27 @@ class NoteSeeder extends Seeder
     {
         $users = User::all();
 
-        
         Company::all()->each(function ($company) use ($users) {
             Note::factory()->count(2)->create([
                 'noteable_type' => Company::class,
-                'noteable_id'   => $company->id,
-                'created_by'    => $users->random()->id ?? User::factory(),
+                'noteable_id' => $company->id,
+                'created_by' => $users->random()->id ?? User::factory(),
             ]);
         });
 
         Lead::all()->each(function ($lead) use ($users) {
             Note::factory()->count(2)->create([
                 'noteable_type' => Lead::class,
-                'noteable_id'   => $lead->id,
-                'created_by'    => $users->random()->id ?? User::factory(),
+                'noteable_id' => $lead->id,
+                'created_by' => $users->random()->id ?? User::factory(),
             ]);
         });
 
         Contact::all()->each(function ($contact) use ($users) {
             Note::factory()->count(2)->create([
                 'noteable_type' => Contact::class,
-                'noteable_id'   => $contact->id,
-                'created_by'    => $users->random()->id ?? User::factory(),
+                'noteable_id' => $contact->id,
+                'created_by' => $users->random()->id ?? User::factory(),
             ]);
         });
     }

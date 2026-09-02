@@ -26,9 +26,9 @@ class NoteTest extends TestCase
         $company = Company::factory()->create();
 
         $data = [
-            'content'       => 'Bu kompaniya bo\'yicha muhim izoh',
+            'content' => 'Bu kompaniya bo\'yicha muhim izoh',
             'noteable_type' => 'company',
-            'noteable_id'   => $company->id,
+            'noteable_id' => $company->id,
         ];
 
         $response = $this->actingAs($this->user)->post(route('notes.store'), $data);
@@ -37,9 +37,9 @@ class NoteTest extends TestCase
         $response->assertRedirect();
 
         $this->assertDatabaseHas('notes', [
-            'content'       => 'Bu kompaniya bo\'yicha muhim izoh',
-            'created_by'    => $this->user->id,
-            'noteable_id'   => $company->id,
+            'content' => 'Bu kompaniya bo\'yicha muhim izoh',
+            'created_by' => $this->user->id,
+            'noteable_id' => $company->id,
             'noteable_type' => 'company',
         ]);
     }
@@ -49,10 +49,10 @@ class NoteTest extends TestCase
         $company = Company::factory()->create();
 
         $note = Note::factory()->create([
-            'content'       => 'Eski izoh matni',
-            'created_by'    => $this->user->id,
+            'content' => 'Eski izoh matni',
+            'created_by' => $this->user->id,
             'noteable_type' => 'company',
-            'noteable_id'   => $company->id,
+            'noteable_id' => $company->id,
         ]);
 
         $updateData = [
@@ -65,7 +65,7 @@ class NoteTest extends TestCase
         $response->assertRedirect();
 
         $this->assertDatabaseHas('notes', [
-            'id'      => $note->id,
+            'id' => $note->id,
             'content' => 'Yangilangan izoh matni',
         ]);
     }
@@ -75,9 +75,9 @@ class NoteTest extends TestCase
         $company = Company::factory()->create();
 
         $note = Note::factory()->create([
-            'created_by'    => $this->user->id,
+            'created_by' => $this->user->id,
             'noteable_type' => 'company',
-            'noteable_id'   => $company->id,
+            'noteable_id' => $company->id,
         ]);
 
         $response = $this->actingAs($this->user)->delete(route('notes.destroy', $note));

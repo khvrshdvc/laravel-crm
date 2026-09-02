@@ -16,7 +16,6 @@
             </p>
         </div>
 
-        <!-- ASOSIY UPDATE FORMASI -->
         <form action="{{ route('leads.update', $lead) }}"
               method="POST"
               class="bg-white border border-gray-200 rounded-xl p-6"
@@ -27,7 +26,6 @@
 
             <div class="space-y-6">
 
-                <!-- NAME -->
                 <div>
                     <label for="name"
                            class="block text-sm font-medium text-gray-700">
@@ -47,7 +45,6 @@
                     @enderror
                 </div>
 
-                <!-- COMPANY -->
                 <div>
                     <label for="company_id"
                            class="block text-sm font-medium text-gray-700">
@@ -75,7 +72,6 @@
                     @enderror
                 </div>
 
-                <!-- STATUS -->
                 <div>
                     <label for="status"
                            class="block text-sm font-medium text-gray-700">
@@ -108,7 +104,6 @@
                     @enderror
                 </div>
 
-                <!-- CONTACT -->
                 <div>
                     <label for="contact_id"
                            class="block text-sm font-medium text-gray-700">
@@ -136,7 +131,6 @@
                     @enderror
                 </div>
 
-                <!-- NOTES -->
                 <div>
                     <label for="notes"
                            class="block text-sm font-medium text-gray-700">
@@ -182,7 +176,6 @@
 
         </form>
 
-        <!-- DELETE FORM -->
         <form id="delete-lead-form"
               action="{{ route('leads.destroy', $lead) }}"
               method="POST"

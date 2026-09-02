@@ -15,7 +15,6 @@
             </p>
         </div>
 
-        <!-- ASOSIY UPDATE FORMASI -->
         <form action="{{ route('contacts.update', $contact) }}" method="POST"
             class="bg-white border border-gray-200 rounded-xl p-6" novalidate>
 

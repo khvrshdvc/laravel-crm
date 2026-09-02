@@ -1,7 +1,6 @@
 @props(['noteable', 'notes' => collect()])
 
 <div class="bg-white border border-gray-200 rounded-xl mb-8 shadow-sm overflow-hidden">
-    {{-- Header --}}
     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50/50 flex items-center justify-between">
         <h2 class="text-sm font-semibold text-gray-900 flex items-center gap-2">
             <span>Notes</span>
@@ -12,7 +11,7 @@
     </div>
 
     <div class="p-6">
-        {{-- 1. Yangi izoh qo'shish formasi --}}
+        <!-- Add Note Form -->
         <form action="{{ route('notes.store') }}" method="POST" class="mb-6">
             @csrf
             <input type="hidden" name="noteable_type" value="{{ $noteable->getMorphClass() }}">
@@ -36,14 +35,9 @@
             </div>
         </form>
 
-        {{-- 2. Izohlar ro'yxati --}}
+        <!-- Notes List -->
         @if ($notes->isEmpty())
             <div class="py-8 text-center text-sm text-gray-400 border-t border-gray-100">
-                <svg class="mx-auto h-8 w-8 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                </svg>
                 No notes created yet.
             </div>
         @else
@@ -51,7 +45,7 @@
                 @foreach ($notes as $note)
                     <div x-data="{ editing: false }" class="py-4">
 
-                        {{-- Normal Display View --}}
+                        <!-- Read Mode -->
                         <div x-show="!editing" class="flex items-start justify-between gap-4">
                             <div class="space-y-1.5 w-full">
                                 <div class="flex items-center gap-2">
@@ -72,7 +66,7 @@
                                     {{ $note->content }}</p>
                             </div>
 
-                            {{-- Actions (Edit / Delete) with Authorization Check --}}
+                            <!-- Actions -->
                             <div class="flex items-center gap-3 shrink-0 pt-0.5">
                                 @can('update', $note)
                                     <button type="button" @click="editing = true"
@@ -95,7 +89,7 @@
                             </div>
                         </div>
 
-                        {{-- Edit View (Alpine.js) --}}
+                        <!-- Edit Mode -->
                         @can('update', $note)
                             <div x-show="editing" x-cloak class="mt-2">
                                 <form action="{{ route('notes.update', $note) }}" method="POST">

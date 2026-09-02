@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->string('status')->default(LeadStatus::New->value);
 
-            
             $table->foreignId('company_id')
                 ->nullable()
                 ->constrained()
@@ -40,7 +39,7 @@ return new class extends Migration
             $table->foreignId('created_by')
                 ->constrained('users');
 
-            $table->timestamps();;
+            $table->timestamps();
         });
     }
 

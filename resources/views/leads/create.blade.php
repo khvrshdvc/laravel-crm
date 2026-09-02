@@ -20,8 +20,6 @@
             @csrf
 
             <div class="space-y-6">
-
-                {{-- Name --}}
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700">
                         Lead Name <span class="text-red-500">*</span>
@@ -36,7 +34,6 @@
                     @enderror
                 </div>
 
-                {{-- Email & Phone --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">
@@ -67,7 +64,6 @@
                     </div>
                 </div>
 
-                {{-- Source & Status --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="source" class="block text-sm font-medium text-gray-700">
@@ -105,7 +101,6 @@
                     </div>
                 </div>
 
-                {{-- Company & Contact --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="company_id" class="block text-sm font-medium text-gray-700">
@@ -150,7 +145,6 @@
                     </div>
                 </div>
 
-                {{-- Assigned To (Manager) --}}
                 <div>
                     <label for="assigned_to" class="block text-sm font-medium text-gray-700">
                         Assigned To

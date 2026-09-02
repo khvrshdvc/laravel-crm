@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-
-
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
     ];
 
     protected $hidden = [
@@ -40,7 +38,6 @@ class User extends Authenticatable
         return $this->hasMany(Note::class, 'created_by');
     }
 
-    
     public function isAdmin(): bool
     {
         return $this->role === UserRole::Admin;

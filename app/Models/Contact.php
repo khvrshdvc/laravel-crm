@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Contact extends Model
 {
-    use HasFactory, HasTasks, HasNotes;
+    use HasFactory, HasNotes, HasTasks;
 
     protected $fillable = [
         'first_name',

@@ -4,13 +4,14 @@ namespace App\Services;
 
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Lead;
 use App\Models\Deal;
+use App\Models\Lead;
 use App\Models\Task;
-use Laravel\Prompts\Task as PromptsTask;
+use Illuminate\Database\Eloquent\Collection;
 
 class DashboardService
 {
+    // Retrieve aggregated dashboard statistics
     public function getStats(): array
     {
         return [
@@ -24,14 +25,24 @@ class DashboardService
         ];
     }
 
-    public function getRecentLeads()
+    // Retrieve recent leads with optimized relations
+    public function getRecentLeads(): Collection
     {
-        return Lead::with(['company', 'assignedTo'])->latest()->limit(5)->get();
+        return Lead::query()
+            ->with([
+                'company:id,name',
+                'assignedTo:id,name',
+            ])
+            ->latest()
+            ->limit(5)
+            ->get();
     }
 
-    public function getTodayTasks()
+    // Retrieve tasks due today with assigned user details
+    public function getTodayTasks(): Collection
     {
-        return Task::with('assignedUser')
+        return Task::query()
+            ->with('assignedUser:id,name')
             ->whereDate('due_date', today())
             ->orderBy('due_date')
             ->get();

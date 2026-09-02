@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lead extends Model
 {
-    use HasFactory, HasTasks, HasNotes;
+    use HasFactory, HasNotes, HasTasks;
 
     protected $fillable = [
         'name',

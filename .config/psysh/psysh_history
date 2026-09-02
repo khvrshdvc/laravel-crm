@@ -10,3 +10,15 @@ App\Models\Note::pluck('noteable_id', 'noteable_type');
 \App\Models\Deal::where('status', 'won')->count()
 \App\Models\Deal::select('status')->distinct()->get()
 \App\Models\Deal::withTrashed()->where('status', 'won')->count()
+class_exists(\App\Http\Controllers\DealController::class)
+\App\Models\User::find(1)->notifications
+$user = App\Models\User::first();
+$user->notify(new App\Notifications\TaskAssignedNotification(App\Models\Task::first()));
+$user = App\Models\User::first();
+$task = App\Models\Task::first();
+
+$user->notify(new App\Notifications\TaskAssignedNotification($task));
+$user = App\Models\User::first();
+$task = App\Models\Task::first();
+$user->notify(new App\Notifications\TaskAssignedNotification($task));
+$user->notify(new App\Notifications\TaskAssignedNotification($task));

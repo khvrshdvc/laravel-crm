@@ -1,14 +1,11 @@
 <x-app-layout>
     <div class="max-w-3xl mx-auto px-6 py-8">
-
-        {{-- Back Button --}}
         <div class="mb-8">
             <a href="{{ route('deals.show', $deal) }}" class="text-sm text-gray-500 hover:text-gray-900 transition">
                 ← Back to deal details
             </a>
         </div>
 
-        {{-- Page Header --}}
         <div class="mb-8">
             <h1 class="text-2xl font-semibold text-gray-900">
                 Edit Deal
@@ -18,13 +15,10 @@
             </p>
         </div>
 
-        {{-- Form Card --}}
         <div class="bg-white border border-gray-200 rounded-xl p-6">
             <form method="POST" action="{{ route('deals.update', $deal) }}">
                 @csrf
                 @method('PUT')
-
-                {{-- Title --}}
                 <div class="mb-6">
                     <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
                         Title <span class="text-red-500">*</span>
@@ -41,7 +35,6 @@
                     @enderror
                 </div>
 
-                {{-- Amount & Status --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">
@@ -81,7 +74,6 @@
                     </div>
                 </div>
 
-                {{-- Company & Contact --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label for="company_id" class="block text-sm font-medium text-gray-700 mb-1">
@@ -128,7 +120,6 @@
                     </div>
                 </div>
 
-                {{-- Assigned To --}}
                 <div class="mb-8">
                     <label for="assigned_to" class="block text-sm font-medium text-gray-700 mb-1">
                         Assigned To (Manager)
@@ -151,7 +142,6 @@
                     @enderror
                 </div>
 
-                {{-- Actions --}}
                 <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
                     <a href="{{ route('deals.show', $deal) }}"
                         class="px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 transition">
@@ -165,7 +155,6 @@
                 </div>
             </form>
 
-            {{-- Danger Zone / Delete Section --}}
             <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-medium text-gray-900">Delete Deal</h3>
