@@ -23,6 +23,8 @@ class LeadController extends Controller
 
     public function index(Request $request): View
     {
+        $this->authorize('viewAny', Lead::class);
+
         $leads = $this->leadService->getPaginated(
             filters: $request->only(['company_id', 'status', 'search', 'assigned_to']),
             perPage: 15
@@ -35,6 +37,8 @@ class LeadController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', Lead::class);
+
         $companies = Company::select('id', 'name')->orderBy('name')->get();
         $contacts = Contact::select('id', 'first_name', 'last_name')->get();
         $users = User::select('id', 'name')->orderBy('name')->get();
@@ -44,6 +48,8 @@ class LeadController extends Controller
 
     public function store(StoreLeadRequest $request): RedirectResponse
     {
+        $this->authorize('create', Lead::class);
+
         $lead = $this->leadService->create(
             data: $request->validated(),
             user: $request->user()
@@ -56,6 +62,8 @@ class LeadController extends Controller
 
     public function show(Lead $lead)
     {
+        $this->authorize('view', $lead);
+
         $lead->load(['company', 'contact', 'deal', 'notes.user']);
 
         $users = User::query()
@@ -67,6 +75,8 @@ class LeadController extends Controller
 
     public function edit(Lead $lead): View
     {
+        $this->authorize('update', $lead);
+
         $companies = Company::select('id', 'name')->orderBy('name')->get();
         $contacts = Contact::select('id', 'first_name', 'last_name')->get();
         $users = User::select('id', 'name')->orderBy('name')->get();
@@ -76,6 +86,8 @@ class LeadController extends Controller
 
     public function update(StoreLeadRequest $request, Lead $lead): RedirectResponse
     {
+        $this->authorize('update', $lead);
+
         $this->leadService->update($lead, $request->validated());
 
         return redirect()
@@ -85,6 +97,8 @@ class LeadController extends Controller
 
     public function updateStatus(Request $request, Lead $lead): RedirectResponse
     {
+        $this->authorize('update', $lead);
+
         $request->validate([
             'status' => ['required', new Enum(LeadStatus::class)],
         ]);
@@ -99,6 +113,8 @@ class LeadController extends Controller
 
     public function destroy(Lead $lead): RedirectResponse
     {
+        $this->authorize('delete', $lead);
+
         $this->leadService->delete($lead);
 
         return redirect()
@@ -108,12 +124,16 @@ class LeadController extends Controller
 
     public function showConvertForm(Lead $lead)
     {
+        $this->authorize('update', $lead);
+
         $users = User::all();
         return view('leads.convert', compact('lead', 'users'));
     }
 
     public function convert(ConvertLeadRequest $request, Lead $lead, LeadService $service)
     {
+        $this->authorize('update', $lead);
+
         $deal = $service->convertToDeal(
             $lead,
             $request->validated(),

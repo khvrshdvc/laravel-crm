@@ -7,6 +7,7 @@ use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\Deal;
 use App\Models\Task;
+use Laravel\Prompts\Task as PromptsTask;
 
 class DashboardService
 {

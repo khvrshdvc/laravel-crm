@@ -15,6 +15,8 @@ class DealController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Deal::class);
+
         $deals = Deal::with(['company', 'contact', 'assignedUser'])
             ->when($request->search, fn($query, $search) => $query->where('title', 'like', "%{$search}%"))
             ->when($request->status, fn($query, $status) => $query->where('status', $status))
@@ -31,6 +33,8 @@ class DealController extends Controller
 
     public function create(Request $request)
     {
+        $this->authorize('create', Deal::class);
+
         $companies = Company::query()->orderBy('name')->get();
         $contacts  = Contact::query()->orderBy('first_name')->get();
         $users     = User::query()->orderBy('name')->get();
@@ -50,6 +54,7 @@ class DealController extends Controller
 
     public function store(StoreDealRequest $request, DealService $service)
     {
+        $this->authorize('create', Deal::class);
 
         $deal = $service->create(
             $request->validated(),
@@ -63,6 +68,8 @@ class DealController extends Controller
 
     public function show(Deal $deal)
     {
+        $this->authorize('view', $deal);
+
         $deal->load(['lead', 'company', 'contact', 'assignedUser', 'creator', 'notes.user']);
 
         return view('deals.show', compact('deal'));
@@ -70,6 +77,7 @@ class DealController extends Controller
 
     public function edit(Deal $deal)
     {
+        $this->authorize('update', $deal);
 
         $companies = Company::query()->orderBy('name')->get();
         $contacts  = Contact::query()->orderBy('first_name')->get();
@@ -80,6 +88,8 @@ class DealController extends Controller
 
     public function update(UpdateDealRequest $request, Deal $deal, DealService $service)
     {
+        $this->authorize('update', $deal);
+
         $service->update(
             $deal,
             $request->validated()
@@ -94,6 +104,8 @@ class DealController extends Controller
         Deal $deal,
         DealService $service
     ) {
+        $this->authorize('delete', $deal);
+
         $service->delete($deal);
 
         return redirect()

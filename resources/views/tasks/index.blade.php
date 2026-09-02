@@ -10,10 +10,12 @@
                 </p>
             </div>
 
-            <a href="{{ route('tasks.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition shadow-sm">
-                + Add Task
-            </a>
+            @can('create', App\Models\Task::class)
+                <a href="{{ route('tasks.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition shadow-sm">
+                    + Add Task
+                </a>
+            @endcan
         </div>
 
         {{-- Flash Success Message --}}
@@ -25,9 +27,9 @@
 
         {{-- Search & Filters --}}
         <form method="GET" action="{{ route('tasks.index') }}" class="mb-6">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title..."
-                    class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    class="flex-1 min-w-[200px] rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
 
                 <select name="status" onchange="this.form.submit()"
                     class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
@@ -59,6 +61,7 @@
                     class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
                     Search
                 </button>
+
                 @if (request('search') || request('status') || request('priority') || request('assigned_to'))
                     <a href="{{ route('tasks.index') }}"
                         class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
@@ -90,22 +93,35 @@
 
                                 {{-- Title --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="font-medium text-gray-900">
+                                    <a href="{{ route('tasks.show', $task) }}"
+                                        class="font-medium text-gray-900 hover:underline">
                                         {{ $task->title }}
-                                    </span>
+                                    </a>
                                 </td>
 
                                 {{-- Polymorphic Relationship (Related To) --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
                                     @if ($task->taskable)
+                                        @php
+                                            $modelName = Illuminate\Support\Str::afterLast($task->taskable_type, '\\');
+                                            $routeName =
+                                                strtolower(Illuminate\Support\Str::plural($modelName)) . '.show';
+                                            $title = $task->taskable->name ?? ($task->taskable->title ?? '—');
+                                        @endphp
+
                                         <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1  text-xs font-medium text-gray-700">
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-md">
                                             <span class="text-gray-500 font-normal">
-                                                {{ Illuminate\Support\Str::afterLast($task->taskable_type, '\\') }}:
+                                                {{ $modelName }}:
                                             </span>
-                                            <strong class="text-gray-900">
-                                                {{ $task->taskable->name ?? ($task->taskable->title ?? '—') }}
-                                            </strong>
+                                            @if (\Illuminate\Support\Facades\Route::has($routeName))
+                                                <a href="{{ route($routeName, $task->taskable) }}"
+                                                    class="text-gray-900 font-semibold hover:underline">
+                                                    {{ $title }}
+                                                </a>
+                                            @else
+                                                <strong class="text-gray-900">{{ $title }}</strong>
+                                            @endif
                                         </span>
                                     @else
                                         <span class="text-gray-400">—</span>
@@ -117,9 +133,20 @@
                                     {{ $task->assignedUser?->name ?? 'Unassigned' }}
                                 </td>
 
-                                {{-- Due Date --}}
+                                {{-- Due Date (Highlights Overdue Tasks) --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                    {{ $task->due_date ? $task->due_date->format('Y-m-d') : '—' }}
+                                    @if ($task->due_date)
+                                        @php
+                                            $isOverdue =
+                                                $task->due_date->isPast() &&
+                                                ($task->status->value ?? $task->status) !== 'completed';
+                                        @endphp
+                                        <span class="{{ $isOverdue ? 'text-red-600 font-semibold' : '' }}">
+                                            {{ $task->due_date->format('Y-m-d') }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400">—</span>
+                                    @endif
                                 </td>
 
                                 {{-- Priority (Dynamic Colors) --}}
@@ -127,14 +154,14 @@
                                     @php
                                         $priorityValue = $task->priority->value ?? $task->priority;
                                         $priorityClasses = match (strtolower($priorityValue)) {
-                                            'high', 'urgent' => 'bg-red-50 text-red-700 border-red-100',
-                                            'medium' => 'bg-yellow-50 text-yellow-700 border-yellow-100',
+                                            'high', 'urgent' => 'bg-red-50 text-red-700 border-red-200',
+                                            'medium' => 'bg-amber-50 text-amber-700 border-amber-200',
                                             'low' => 'bg-gray-100 text-gray-700 border-gray-200',
                                             default => 'bg-gray-100 text-gray-800 border-gray-200',
                                         };
                                     @endphp
                                     <span
-                                        class="px-2 py-0.5 rounded text-xs font-medium border {{ $priorityClasses }}">
+                                        class="px-2.5 py-0.5 rounded text-xs font-medium border {{ $priorityClasses }}">
                                         {{ ucfirst($priorityValue) }}
                                     </span>
                                 </td>
@@ -144,10 +171,10 @@
                                     @php
                                         $statusValue = $task->status->value ?? $task->status;
                                         $statusClasses = match (strtolower($statusValue)) {
-                                            'completed', 'done' => 'bg-green-50 text-green-700 border-green-100',
-                                            'in_progress', 'doing' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                            'completed', 'done' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                            'in_progress', 'doing' => 'bg-blue-50 text-blue-700 border-blue-200',
                                             'pending', 'todo' => 'bg-gray-100 text-gray-700 border-gray-200',
-                                            default => 'bg-blue-50 text-blue-700 border-blue-100',
+                                            default => 'bg-blue-50 text-blue-700 border-blue-200',
                                         };
                                     @endphp
                                     <span
@@ -159,21 +186,25 @@
                                 {{-- Actions --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
                                     <div class="flex justify-end items-center gap-3">
-                                        <a href="{{ route('tasks.edit', $task) }}"
-                                            class="text-gray-600 hover:text-gray-900 transition font-medium">
-                                            Edit
-                                        </a>
+                                        @can('update', $task)
+                                            <a href="{{ route('tasks.edit', $task) }}"
+                                                class="text-gray-600 hover:text-gray-900 transition font-medium">
+                                                Edit
+                                            </a>
+                                        @endcan
 
-                                        <form action="{{ route('tasks.destroy', $task) }}" method="POST"
-                                            onsubmit="return confirm('Delete this task?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        @can('delete', $task)
+                                            <form action="{{ route('tasks.destroy', $task) }}" method="POST"
+                                                onsubmit="return confirm('Delete this task?')">
+                                                @csrf
+                                                @method('DELETE')
 
-                                            <button type="submit"
-                                                class="text-red-500 hover:text-red-700 transition font-medium">
-                                                Delete
-                                            </button>
-                                        </form>
+                                                <button type="submit"
+                                                    class="text-red-500 hover:text-red-700 transition font-medium">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endcan
                                     </div>
                                 </td>
 
@@ -186,10 +217,12 @@
                                     @else
                                         <p class="text-gray-500">No tasks found.</p>
 
-                                        <a href="{{ route('tasks.create') }}"
-                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                            Create your first task
-                                        </a>
+                                        @can('create', App\Models\Task::class)
+                                            <a href="{{ route('tasks.create') }}"
+                                                class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                                Create your first task
+                                            </a>
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>

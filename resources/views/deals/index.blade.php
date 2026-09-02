@@ -10,10 +10,12 @@
                 </p>
             </div>
 
-            <a href="{{ route('deals.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                + Add deal
-            </a>
+            @can('create', App\Models\Deal::class)
+                <a href="{{ route('deals.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    + Add deal
+                </a>
+            @endcan
         </div>
 
         {{-- Flash Success Message --}}
@@ -25,9 +27,9 @@
 
         {{-- Search & Filter --}}
         <form method="GET" action="{{ route('deals.index') }}" class="mb-6">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title..."
-                    class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    class="flex-1 min-w-[200px] rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
 
                 <select name="status" onchange="this.form.submit()"
                     class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
@@ -73,6 +75,7 @@
                             <th class="px-6 py-4 font-medium text-gray-500">Title</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Company</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Contact</th>
+                            <th class="px-6 py-4 font-medium text-gray-500">Assigned To</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Amount</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Status</th>
                             <th class="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
@@ -93,16 +96,31 @@
 
                                 {{-- Company --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                    {{ $deal->company?->name ?? '—' }}
+                                    @if ($deal->company)
+                                        <a href="{{ route('companies.show', $deal->company) }}"
+                                            class="hover:underline text-gray-700 font-medium">
+                                            {{ $deal->company->name }}
+                                        </a>
+                                    @else
+                                        <span class="text-gray-400">—</span>
+                                    @endif
                                 </td>
 
                                 {{-- Contact --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-500">
                                     @if ($deal->contact)
-                                        {{ $deal->contact->first_name }} {{ $deal->contact->last_name }}
+                                        <a href="{{ route('contacts.show', $deal->contact) }}"
+                                            class="hover:underline text-gray-700">
+                                            {{ $deal->contact->first_name }} {{ $deal->contact->last_name }}
+                                        </a>
                                     @else
-                                        —
+                                        <span class="text-gray-400">—</span>
                                     @endif
+                                </td>
+
+                                {{-- Assigned To --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                    {{ $deal->assignedTo->name ?? 'Unassigned' }}
                                 </td>
 
                                 {{-- Amount --}}
@@ -112,45 +130,64 @@
 
                                 {{-- Status --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $statusValue = $deal->status->value ?? $deal->status;
+                                        $badgeClasses = match ($statusValue) {
+                                            'new' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                            'contacted' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                            'qualified' => 'bg-purple-50 text-purple-700 border-purple-200',
+                                            'proposal' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                            'negotiation' => 'bg-orange-50 text-orange-700 border-orange-200',
+                                            'won' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                            'lost' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                            default => 'bg-gray-50 text-gray-700 border-gray-200',
+                                        };
+                                    @endphp
                                     <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
-                                        {{ ucfirst($deal->status->value ?? $deal->status) }}
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $badgeClasses }}">
+                                        {{ ucfirst($statusValue) }}
                                     </span>
                                 </td>
 
                                 {{-- Actions --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-right">
                                     <div class="flex justify-end items-center gap-3">
-                                        <a href="{{ route('deals.edit', $deal) }}"
-                                            class="text-gray-600 hover:text-gray-900 transition">
-                                            Edit
-                                        </a>
+                                        @can('update', $deal)
+                                            <a href="{{ route('deals.edit', $deal) }}"
+                                                class="text-gray-600 hover:text-gray-900 transition">
+                                                Edit
+                                            </a>
+                                        @endcan
 
-                                        <form action="{{ route('deals.destroy', $deal) }}" method="POST"
-                                            onsubmit="return confirm('Delete this deal?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        @can('delete', $deal)
+                                            <form action="{{ route('deals.destroy', $deal) }}" method="POST"
+                                                onsubmit="return confirm('Delete this deal?')">
+                                                @csrf
+                                                @method('DELETE')
 
-                                            <button type="submit" class="text-red-500 hover:text-red-700 transition">
-                                                Delete
-                                            </button>
-                                        </form>
+                                                <button type="submit" class="text-red-500 hover:text-red-700 transition">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endcan
                                     </div>
                                 </td>
 
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
+                                <td colspan="7" class="px-6 py-12 text-center">
                                     @if (request('search') || request('status') || request('assigned_to'))
                                         <p class="text-gray-500">No deals match your filters.</p>
                                     @else
                                         <p class="text-gray-500">No deals found.</p>
 
-                                        <a href="{{ route('deals.create') }}"
-                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                            Add your first deal
-                                        </a>
+                                        @can('create', App\Models\Deal::class)
+                                            <a href="{{ route('deals.create') }}"
+                                                class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                                Add your first deal
+                                            </a>
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>

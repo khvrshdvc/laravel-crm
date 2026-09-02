@@ -9,10 +9,12 @@
                 </p>
             </div>
 
-            <a href="{{ route('leads.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                + Add lead
-            </a>
+            @can('create', App\Models\Lead::class)
+                <a href="{{ route('leads.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    + Add lead
+                </a>
+            @endcan
         </div>
 
         @if (session('success'))
@@ -22,10 +24,10 @@
         @endif
 
         <form method="GET" action="{{ route('leads.index') }}" class="mb-6">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Search by name, email or source..."
-                    class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    class="flex-1 min-w-[200px] rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
 
                 <select name="status" onchange="this.form.submit()"
                     class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
@@ -60,7 +62,6 @@
         </form>
 
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-gray-50 border-b border-gray-200">
@@ -68,6 +69,7 @@
                             <th class="px-6 py-4 font-medium text-gray-500">Lead Name</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Status</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Company</th>
+                            <th class="px-6 py-4 font-medium text-gray-500">Assigned To</th>
                             <th class="px-6 py-4 font-medium text-gray-500">Source</th>
                             <th class="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
                         </tr>
@@ -85,20 +87,35 @@
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <span class="text-xs font-medium text-gray-600 tracking-wide uppercase">
-                                        {{ $lead->status->value ?? $lead->status }}
+                                    @php
+                                        $statusValue = $lead->status->value ?? $lead->status;
+                                        $badgeClasses = match ($statusValue) {
+                                            'new' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                            'contacted' => 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                                            'qualified' => 'bg-green-50 text-green-700 border-green-200',
+                                            'lost' => 'bg-red-50 text-red-700 border-red-200',
+                                            default => 'bg-gray-50 text-gray-700 border-gray-200',
+                                        };
+                                    @endphp
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $badgeClasses }}">
+                                        {{ ucfirst($statusValue) }}
                                     </span>
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-500">
                                     @if ($lead->company)
                                         <a href="{{ route('companies.show', $lead->company) }}"
-                                            class="hover:underline text-gray-700">
+                                            class="hover:underline text-gray-700 font-medium">
                                             {{ $lead->company->name }}
                                         </a>
                                     @else
-                                        —
+                                        <span class="text-gray-400">—</span>
                                     @endif
+                                </td>
+
+                                <td class="px-6 py-4 text-gray-500">
+                                    {{ $lead->assignedTo->name ?? 'Unassigned' }}
                                 </td>
 
                                 <td class="px-6 py-4 text-gray-500">
@@ -107,36 +124,42 @@
 
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end items-center gap-3">
-                                        <a href="{{ route('leads.edit', $lead) }}"
-                                            class="text-gray-600 hover:text-gray-900">
-                                            Edit
-                                        </a>
+                                        @can('update', $lead)
+                                            <a href="{{ route('leads.edit', $lead) }}"
+                                                class="text-gray-600 hover:text-gray-900">
+                                                Edit
+                                            </a>
+                                        @endcan
 
-                                        <form action="{{ route('leads.destroy', $lead) }}" method="POST"
-                                            onsubmit="return confirm('Delete this lead?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        @can('delete', $lead)
+                                            <form action="{{ route('leads.destroy', $lead) }}" method="POST"
+                                                onsubmit="return confirm('Delete this lead?')">
+                                                @csrf
+                                                @method('DELETE')
 
-                                            <button type="submit" class="text-red-500 hover:text-red-700">
-                                                Delete
-                                            </button>
-                                        </form>
+                                                <button type="submit" class="text-red-500 hover:text-red-700">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endcan
                                     </div>
                                 </td>
 
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center">
+                                <td colspan="6" class="px-6 py-12 text-center">
                                     @if (request('search') || request('status') || request('assigned_to'))
                                         <p class="text-gray-500">No leads match your filters.</p>
                                     @else
                                         <p class="text-gray-500">No leads found.</p>
 
-                                        <a href="{{ route('leads.create') }}"
-                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                            Add your first lead
-                                        </a>
+                                        @can('create', App\Models\Lead::class)
+                                            <a href="{{ route('leads.create') }}"
+                                                class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                                Add your first lead
+                                            </a>
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>

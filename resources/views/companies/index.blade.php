@@ -9,10 +9,12 @@
                 </p>
             </div>
 
-            <a href="{{ route('companies.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                + Add company
-            </a>
+            @can('create', App\Models\Company::class)
+                <a href="{{ route('companies.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    + Add company
+                </a>
+            @endcan
         </div>
 
         @if (session('success'))
@@ -78,20 +80,24 @@
 
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end items-center gap-3">
-                                        <a href="{{ route('companies.edit', $company) }}"
-                                            class="text-gray-600 hover:text-gray-900">
-                                            Edit
-                                        </a>
+                                        @can('update', $company)
+                                            <a href="{{ route('companies.edit', $company) }}"
+                                                class="text-gray-600 hover:text-gray-900">
+                                                Edit
+                                            </a>
+                                        @endcan
 
-                                        <form action="{{ route('companies.destroy', $company) }}" method="POST"
-                                            onsubmit="return confirm('Delete this company?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        @can('delete', $company)
+                                            <form action="{{ route('companies.destroy', $company) }}" method="POST"
+                                                onsubmit="return confirm('Delete this company?')">
+                                                @csrf
+                                                @method('DELETE')
 
-                                            <button type="submit" class="text-red-500 hover:text-red-700">
-                                                Delete
-                                            </button>
-                                        </form>
+                                                <button type="submit" class="text-red-500 hover:text-red-700">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endcan
                                     </div>
                                 </td>
 
@@ -104,10 +110,12 @@
                                     @else
                                         <p class="text-gray-500">No companies found.</p>
 
-                                        <a href="{{ route('companies.create') }}"
-                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                            Add your first company
-                                        </a>
+                                        @can('create', App\Models\Company::class)
+                                            <a href="{{ route('companies.create') }}"
+                                                class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                                Add your first company
+                                            </a>
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>

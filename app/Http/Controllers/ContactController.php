@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+
 class ContactController extends Controller
 {
 
@@ -20,6 +21,8 @@ class ContactController extends Controller
 
     public function index(Request $request): View
     {
+        $this->authorize('viewAny', Contact::class);
+
         $contacts = $this->contactService->getPaginated(
             filters: $request->only(['company_id', 'search']),
             perPage: 20
@@ -30,6 +33,8 @@ class ContactController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', Contact::class);
+
         $companies = Company::select('id', 'name')->orderBy('name')->get();
 
         return view('contacts.create', compact('companies'));
@@ -37,6 +42,8 @@ class ContactController extends Controller
 
     public function store(StoreContactRequest $request): RedirectResponse
     {
+        $this->authorize('create', Contact::class);
+
         $contact = $this->contactService->create(
             data: $request->validated(),
             user: $request->user()
@@ -49,6 +56,8 @@ class ContactController extends Controller
 
     public function show(Contact $contact): View
     {
+        $this->authorize('view', $contact);
+
         $contact->load(['company', 'createdBy', 'notes.user']);
 
         return view('contacts.show', compact('contact'));
@@ -56,6 +65,8 @@ class ContactController extends Controller
 
     public function edit(Contact $contact): View
     {
+        $this->authorize('update', $contact);
+
         $companies = Company::select('id', 'name')->orderBy('name')->get();
 
         return view('contacts.edit', compact('contact', 'companies'));
@@ -63,6 +74,8 @@ class ContactController extends Controller
 
     public function update(UpdateContactRequest $request, Contact $contact): RedirectResponse
     {
+        $this->authorize('update', $contact);
+
         $this->contactService->update($contact, $request->validated());
 
         return redirect()
@@ -72,6 +85,8 @@ class ContactController extends Controller
 
     public function destroy(Contact $contact): RedirectResponse
     {
+        $this->authorize('delete', $contact);
+
         $this->contactService->delete($contact);
 
         return redirect()

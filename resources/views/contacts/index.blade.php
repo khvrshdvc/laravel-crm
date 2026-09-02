@@ -9,10 +9,12 @@
                 </p>
             </div>
 
-            <a href="{{ route('contacts.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
-                + Add contact
-            </a>
+            @can('create', App\Models\Contact::class)
+                <a href="{{ route('contacts.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    + Add contact
+                </a>
+            @endcan
         </div>
 
         @if (session('success'))
@@ -26,10 +28,12 @@
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Search by name, email or phone..."
                     class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                
                 <button type="submit"
                     class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
                     Search
                 </button>
+
                 @if (request('search'))
                     <a href="{{ route('contacts.index') }}"
                         class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
@@ -40,7 +44,6 @@
         </form>
 
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-gray-50 border-b border-gray-200">
@@ -67,11 +70,11 @@
                                 <td class="px-6 py-4 text-gray-500">
                                     @if ($contact->company)
                                         <a href="{{ route('companies.show', $contact->company) }}"
-                                            class="hover:underline text-gray-700">
+                                            class="hover:underline text-gray-700 font-medium">
                                             {{ $contact->company->name }}
                                         </a>
                                     @else
-                                        —
+                                        <span class="text-gray-400">—</span>
                                     @endif
                                 </td>
 
@@ -85,20 +88,24 @@
 
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end items-center gap-3">
-                                        <a href="{{ route('contacts.edit', $contact) }}"
-                                            class="text-gray-600 hover:text-gray-900">
-                                            Edit
-                                        </a>
+                                        @can('update', $contact)
+                                            <a href="{{ route('contacts.edit', $contact) }}"
+                                                class="text-gray-600 hover:text-gray-900">
+                                                Edit
+                                            </a>
+                                        @endcan
 
-                                        <form action="{{ route('contacts.destroy', $contact) }}" method="POST"
-                                            onsubmit="return confirm('Delete this contact?')">
-                                            @csrf
-                                            @method('DELETE')
+                                        @can('delete', $contact)
+                                            <form action="{{ route('contacts.destroy', $contact) }}" method="POST"
+                                                onsubmit="return confirm('Delete this contact?')">
+                                                @csrf
+                                                @method('DELETE')
 
-                                            <button type="submit" class="text-red-500 hover:text-red-700">
-                                                Delete
-                                            </button>
-                                        </form>
+                                                <button type="submit" class="text-red-500 hover:text-red-700">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endcan
                                     </div>
                                 </td>
 
@@ -111,10 +118,12 @@
                                     @else
                                         <p class="text-gray-500">No contacts found.</p>
 
-                                        <a href="{{ route('contacts.create') }}"
-                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                            Add your first contact
-                                        </a>
+                                        @can('create', App\Models\Contact::class)
+                                            <a href="{{ route('contacts.create') }}"
+                                                class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                                Add your first contact
+                                            </a>
+                                        @endcan
                                     @endif
                                 </td>
                             </tr>

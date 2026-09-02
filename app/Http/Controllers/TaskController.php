@@ -10,11 +10,14 @@ use App\Models\Lead;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use Illuminate\Http\Request;
+use Laravel\Prompts\Task as PromptsTask;
 
 class TaskController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Task::class);
+
         $tasks = Task::with(['assignedUser', 'taskable'])
             ->when($request->search, function ($query, $search) {
                 $query->where('title', 'like', "%{$search}%");
@@ -39,6 +42,8 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
+        $this->authorize('view', $task);
+
         $task->load(['assignedUser', 'taskable']);
 
         return view('tasks.show', compact('task'));
@@ -46,6 +51,8 @@ class TaskController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Task::class);
+
         $users = User::select('id', 'name')->orderBy('name')->get();
         $companies = Company::select('id', 'name')->orderBy('name')->get();
         $leads = Lead::select('id', 'name')->orderBy('name')->get();
@@ -56,6 +63,8 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
+        $this->authorize('create', Task::class);
+
         Task::create($request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
@@ -63,6 +72,8 @@ class TaskController extends Controller
 
     public function edit(Task $task)
     {
+        $this->authorize('update', $task);
+
         $users = User::select('id', 'name')->orderBy('name')->get();
         $companies = Company::select('id', 'name')->orderBy('name')->get();
         $leads = Lead::select('id', 'name')->orderBy('name')->get();
@@ -73,6 +84,8 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize('update', $task);
+
         $task->update($request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
@@ -80,6 +93,8 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
+
         $task->delete();
 
         return back()->with('success', 'Task deleted successfully.');
