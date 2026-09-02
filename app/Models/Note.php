@@ -11,7 +11,6 @@ class Note extends Model
 
     protected $fillable = [
         'content',
-        'user_id',
         'created_by',
         'noteable_id',
         'noteable_type', 
@@ -19,7 +18,7 @@ class Note extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function noteable()

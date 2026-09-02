@@ -19,7 +19,7 @@ class DealController extends Controller
             'company',
             'contact',
             'assignedUser',
-        ])->latest()->paginate(10);
+        ])->latest()->orderBy('id', 'desc')->paginate(10);
 
         return view('deals.index', compact('deals'));
     }

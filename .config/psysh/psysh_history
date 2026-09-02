@@ -4,3 +4,9 @@ $company = App\Models\Company::first();
 App\Models\Note::where('noteable_id', $company->id)->get();
 $company->notes;
 App\Models\Note::pluck('noteable_id', 'noteable_type');
+\App\Models\Note::with('user')->latest()->first()->user
+\Schema::getColumnListing('deals')
+(new \App\Models\Lead)->getConnection()->getSchemaBuilder()->getColumnListing('leads')
+\App\Models\Deal::where('status', 'won')->count()
+\App\Models\Deal::select('status')->distinct()->get()
+\App\Models\Deal::withTrashed()->where('status', 'won')->count()

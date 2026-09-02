@@ -46,7 +46,7 @@
                             <div class="space-y-1 w-full">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-semibold text-gray-900">
-                                        {{ $note->user->id ?? 'User' }}
+                                        {{ $note->user->name ?? 'User' }}
                                     </span>
                                     <span class="text-xs text-gray-400">•</span>
                                     <span class="text-xs text-gray-400">

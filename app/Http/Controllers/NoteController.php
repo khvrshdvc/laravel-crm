@@ -19,7 +19,7 @@ class NoteController extends Controller
             'content'       => $validated['content'],
             'noteable_type' => $validated['noteable_type'],
             'noteable_id'   => $validated['noteable_id'],
-            'user_id'       => Auth::id(), // <-- SHU YERDA SAQLANISHI SHART
+            'created_by'       => Auth::id(), 
         ]);
 
         return back()->with('success', 'Note qo\'shildi!');
