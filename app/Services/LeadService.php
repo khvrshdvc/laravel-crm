@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class LeadService
 {
-   
+
     public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return Lead::query()
@@ -21,6 +21,14 @@ class LeadService
             })
             ->when(!empty($filters['status']), function ($query) use ($filters) {
                 $query->where('status', $filters['status']);
+            })
+            ->when(!empty($filters['search']), function ($query) use ($filters) {
+                $search = $filters['search'];
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('source', 'like', "%{$search}%");
+                });
             })
             ->latest()
             ->paginate($perPage);

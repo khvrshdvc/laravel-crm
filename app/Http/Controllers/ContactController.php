@@ -13,7 +13,7 @@ use Illuminate\View\View;
 
 class ContactController extends Controller
 {
-   
+
     public function __construct(
         protected ContactService $contactService
     ) {}
@@ -21,7 +21,7 @@ class ContactController extends Controller
     public function index(Request $request): View
     {
         $contacts = $this->contactService->getPaginated(
-            filters: $request->only(['company_id']),
+            filters: $request->only(['company_id', 'search']),
             perPage: 20
         );
 
@@ -49,7 +49,7 @@ class ContactController extends Controller
 
     public function show(Contact $contact): View
     {
-        $contact->load(['company', 'createdBy', 'notes.user']); 
+        $contact->load(['company', 'createdBy', 'notes.user']);
 
         return view('contacts.show', compact('contact'));
     }

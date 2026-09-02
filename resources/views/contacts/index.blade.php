@@ -21,6 +21,24 @@
             </div>
         @endif
 
+        <form method="GET" action="{{ route('contacts.index') }}" class="mb-6">
+            <div class="flex gap-2">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Search by name, email or phone..."
+                    class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                <button type="submit"
+                    class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    Search
+                </button>
+                @if (request('search'))
+                    <a href="{{ route('contacts.index') }}"
+                        class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+                        Clear
+                    </a>
+                @endif
+            </div>
+        </form>
+
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
 
             <div class="overflow-x-auto">
@@ -88,12 +106,16 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
-                                    <p class="text-gray-500">No contacts found.</p>
+                                    @if (request('search'))
+                                        <p class="text-gray-500">No contacts match "{{ request('search') }}".</p>
+                                    @else
+                                        <p class="text-gray-500">No contacts found.</p>
 
-                                    <a href="{{ route('contacts.create') }}"
-                                        class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                        Add your first contact
-                                    </a>
+                                        <a href="{{ route('contacts.create') }}"
+                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                            Add your first contact
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse

@@ -21,6 +21,34 @@
             </div>
         @endif
 
+        <form method="GET" action="{{ route('leads.index') }}" class="mb-6">
+            <div class="flex gap-2">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Search by name, email or source..."
+                    class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+
+                <select name="status" onchange="this.form.submit()"
+                    class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    <option value="">All statuses</option>
+                    <option value="new" @selected(request('status') === 'new')>New</option>
+                    <option value="contacted" @selected(request('status') === 'contacted')>Contacted</option>
+                    <option value="qualified" @selected(request('status') === 'qualified')>Qualified</option>
+                    <option value="lost" @selected(request('status') === 'lost')>Lost</option>
+                </select>
+
+                <button type="submit"
+                    class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    Search
+                </button>
+                @if (request('search') || request('status'))
+                    <a href="{{ route('leads.index') }}"
+                        class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+                        Clear
+                    </a>
+                @endif
+            </div>
+        </form>
+
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
 
             <div class="overflow-x-auto">
@@ -90,12 +118,16 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center">
-                                    <p class="text-gray-500">No leads found.</p>
+                                    @if (request('search') || request('status'))
+                                        <p class="text-gray-500">No leads match your filters.</p>
+                                    @else
+                                        <p class="text-gray-500">No leads found.</p>
 
-                                    <a href="{{ route('leads.create') }}"
-                                        class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                        Add your first lead
-                                    </a>
+                                        <a href="{{ route('leads.create') }}"
+                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                            Add your first lead
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse

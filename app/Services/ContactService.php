@@ -16,6 +16,15 @@ class ContactService
             ->when(!empty($filters['company_id']), function ($query) use ($filters) {
                 $query->where('company_id', $filters['company_id']);
             })
+            ->when(!empty($filters['search']), function ($query) use ($filters) {
+                $search = $filters['search'];
+                $query->where(function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                });
+            })
             ->latest()
             ->paginate($perPage);
     }

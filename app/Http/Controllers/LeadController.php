@@ -24,7 +24,7 @@ class LeadController extends Controller
     public function index(Request $request): View
     {
         $leads = $this->leadService->getPaginated(
-            filters: $request->only(['company_id', 'status']),
+            filters: $request->only(['company_id', 'status', 'search']),
             perPage: 15
         );
 

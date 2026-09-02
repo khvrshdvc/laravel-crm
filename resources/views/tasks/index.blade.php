@@ -23,6 +23,41 @@
             </div>
         @endif
 
+        {{-- Search & Filters --}}
+        <form method="GET" action="{{ route('tasks.index') }}" class="mb-6">
+            <div class="flex gap-2">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title..."
+                    class="w-full rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+
+                <select name="status" onchange="this.form.submit()"
+                    class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    <option value="">All statuses</option>
+                    <option value="pending" @selected(request('status') === 'pending')>Pending</option>
+                    <option value="in_progress" @selected(request('status') === 'in_progress')>In progress</option>
+                    <option value="completed" @selected(request('status') === 'completed')>Completed</option>
+                </select>
+
+                <select name="priority" onchange="this.form.submit()"
+                    class="rounded-lg border-gray-300 focus:border-gray-900 focus:ring-gray-900 text-sm p-2.5 border">
+                    <option value="">All priorities</option>
+                    <option value="low" @selected(request('priority') === 'low')>Low</option>
+                    <option value="medium" @selected(request('priority') === 'medium')>Medium</option>
+                    <option value="high" @selected(request('priority') === 'high')>High</option>
+                </select>
+
+                <button type="submit"
+                    class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition">
+                    Search
+                </button>
+                @if (request('search') || request('status') || request('priority'))
+                    <a href="{{ route('tasks.index') }}"
+                        class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+                        Clear
+                    </a>
+                @endif
+            </div>
+        </form>
+
         {{-- Table Container --}}
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
@@ -88,7 +123,8 @@
                                             default => 'bg-gray-100 text-gray-800 border-gray-200',
                                         };
                                     @endphp
-                                    <span class="px-2 py-0.5 rounded text-xs font-medium border {{ $priorityClasses }}">
+                                    <span
+                                        class="px-2 py-0.5 rounded text-xs font-medium border {{ $priorityClasses }}">
                                         {{ ucfirst($priorityValue) }}
                                     </span>
                                 </td>
@@ -135,12 +171,16 @@
                         @empty
                             <tr>
                                 <td colspan="7" class="px-6 py-12 text-center">
-                                    <p class="text-gray-500">No tasks found.</p>
+                                    @if (request('search') || request('status') || request('priority'))
+                                        <p class="text-gray-500">No tasks match your filters.</p>
+                                    @else
+                                        <p class="text-gray-500">No tasks found.</p>
 
-                                    <a href="{{ route('tasks.create') }}"
-                                        class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
-                                        Create your first task
-                                    </a>
+                                        <a href="{{ route('tasks.create') }}"
+                                            class="inline-block mt-3 text-sm font-medium text-gray-900 hover:underline">
+                                            Create your first task
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse

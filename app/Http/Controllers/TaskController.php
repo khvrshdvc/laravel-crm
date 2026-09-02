@@ -9,14 +9,25 @@ use App\Models\Deal;
 use App\Models\Lead;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tasks = Task::with(['assignedUser', 'taskable'])
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%");
+            })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->priority, function ($query, $priority) {
+                $query->where('priority', $priority);
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('tasks.index', compact('tasks'));
     }

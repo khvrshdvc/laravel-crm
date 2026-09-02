@@ -13,13 +13,23 @@ use Illuminate\Http\Request;
 
 class DealController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $deals = Deal::with([
             'company',
             'contact',
             'assignedUser',
-        ])->latest()->orderBy('id', 'desc')->paginate(10);
+        ])
+            ->when($request->search, function ($query, $search) {
+                $query->where('title', 'like', "%{$search}%");
+            })
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->latest()
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('deals.index', compact('deals'));
     }
@@ -30,7 +40,7 @@ class DealController extends Controller
         $contacts  = Contact::query()->orderBy('first_name')->get();
         $users     = User::query()->orderBy('name')->get();
 
-        
+
         $selectedCompanyId = $request->query('company_id');
         $selectedContactId = $request->query('contact_id');
 
@@ -58,14 +68,14 @@ class DealController extends Controller
 
     public function show(Deal $deal)
     {
-        $deal->load(['lead','company','contact','assignedUser','creator','notes.user']);
+        $deal->load(['lead', 'company', 'contact', 'assignedUser', 'creator', 'notes.user']);
 
         return view('deals.show', compact('deal'));
     }
 
     public function edit(Deal $deal)
     {
-    
+
         $companies = Company::query()->orderBy('name')->get();
         $contacts  = Contact::query()->orderBy('first_name')->get();
         $users     = User::query()->orderBy('name')->get();
