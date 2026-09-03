@@ -22,3 +22,9 @@ $task = App\Models\Task::first();
 $user->notify(new App\Notifications\TaskAssignedNotification($task));
 $user->notify(new App\Notifications\TaskAssignedNotification($task));
 config('queu.default')
+class_exists(\Laravel\Sanctum\HasApiTokens::class)
+class_exists(\Laravel\Sanctum\HasApiTokens::class)
+find vendor/laravel/sanctum/src -iname "*HasApiTokens*"
+class_exists(\Laravel\Sanctum\HasApiTokens::class)
+class_exists(\Laravel\Sanctum\HasApiTokens::class)
+trait_exists(\Laravel\Sanctum\HasApiTokens::class)
