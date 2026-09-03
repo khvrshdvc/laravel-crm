@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\DealController;
 use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\TaskController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,9 +31,10 @@ Route::post('/login', function (Request $request) {
     ]);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::apiResource('companies', CompanyController::class)->only(['index', 'show']);
     Route::apiResource('contacts', ContactController::class)->only(['index', 'show']);
     Route::apiResource('leads', LeadController::class)->only(['index', 'show']);
     Route::apiResource('deals', DealController::class)->only(['index', 'show']);
+    Route::apiResource('tasks', TaskController::class)->only(['index', 'show']);
 });
