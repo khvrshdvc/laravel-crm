@@ -16,9 +16,9 @@ $user = App\Models\User::first();
 $user->notify(new App\Notifications\TaskAssignedNotification(App\Models\Task::first()));
 $user = App\Models\User::first();
 $task = App\Models\Task::first();
-
 $user->notify(new App\Notifications\TaskAssignedNotification($task));
 $user = App\Models\User::first();
 $task = App\Models\Task::first();
 $user->notify(new App\Notifications\TaskAssignedNotification($task));
 $user->notify(new App\Notifications\TaskAssignedNotification($task));
+config('queu.default')

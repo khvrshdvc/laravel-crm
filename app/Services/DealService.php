@@ -54,16 +54,22 @@ class DealService
     // Create a new deal
     public function create(array $data, User $user): Deal
     {
-        return Deal::create([
+        $deal = Deal::create([
             ...$data,
             'created_by' => $user->id,
         ]);
+
+        DashboardCacheService::flush();
+
+        return $deal;
     }
 
     // Update an existing deal
     public function update(Deal $deal, array $data): Deal
     {
         $deal->update($data);
+
+        DashboardCacheService::flush();
 
         return $deal->fresh();
     }
@@ -72,5 +78,7 @@ class DealService
     public function delete(Deal $deal): void
     {
         $deal->delete();
+
+        DashboardCacheService::flush();
     }
 }

@@ -7,7 +7,7 @@ use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Task;
 use App\Models\User;
-use App\Notifications\TaskAssignedNotification;
+use App\Notifications\TaskAssigned;
 
 class TaskService
 {
@@ -17,6 +17,8 @@ class TaskService
         $task = Task::create($data);
 
         $this->notifyAssignedUser($task);
+
+        DashboardCacheService::flush();
 
         return $task;
     }
@@ -28,10 +30,11 @@ class TaskService
 
         $task->update($data);
 
-        // Notify only if the task was assigned to a new user
         if ($task->assigned_to && $task->assigned_to !== $oldAssignedTo) {
             $this->notifyAssignedUser($task);
         }
+
+        DashboardCacheService::flush();
 
         return $task->fresh();
     }
@@ -40,6 +43,8 @@ class TaskService
     public function delete(Task $task): void
     {
         $task->delete();
+
+        DashboardCacheService::flush();
     }
 
     // Retrieve form options for create and edit views
@@ -61,8 +66,6 @@ class TaskService
         }
 
         $assignedUser = User::find($task->assigned_to);
-
-        // Send notification to the assigned user
-        $assignedUser?->notify(new TaskAssignedNotification($task));
+        $assignedUser?->notify(new TaskAssigned($task));
     }
 }

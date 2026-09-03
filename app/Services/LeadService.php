@@ -63,44 +63,58 @@ class LeadService
     // Create a new lead
     public function create(array $data, User $user): Lead
     {
-        return DB::transaction(fn() => Lead::create([
+        $lead = DB::transaction(fn() => Lead::create([
             ...$data,
             'created_by' => $user->id,
         ]));
+
+        DashboardCacheService::flush();
+
+        return $lead;
     }
 
     // Update an existing lead
     public function update(Lead $lead, array $data): Lead
     {
-        return DB::transaction(function () use ($lead, $data) {
+        $lead = DB::transaction(function () use ($lead, $data) {
             $lead->update($data);
 
             return $lead;
         });
+
+        DashboardCacheService::flush();
+
+        return $lead;
     }
 
     // Update lead status
     public function updateStatus(Lead $lead, LeadStatus $status): Lead
     {
-        return DB::transaction(function () use ($lead, $status) {
+        $lead = DB::transaction(function () use ($lead, $status) {
             $lead->update([
                 'status' => $status->value,
             ]);
 
             return $lead;
         });
+
+        DashboardCacheService::flush();
+
+        return $lead;
     }
 
     // Delete a lead
     public function delete(Lead $lead): void
     {
         DB::transaction(fn() => $lead->delete());
+
+        DashboardCacheService::flush();
     }
 
     // Convert lead to deal
     public function convertToDeal(Lead $lead, array $dealData, User $user): Deal
     {
-        return DB::transaction(function () use ($lead, $dealData, $user) {
+        $deal = DB::transaction(function () use ($lead, $dealData, $user) {
             $deal = Deal::create([
                 ...$dealData,
                 'lead_id' => $lead->id,
@@ -115,5 +129,9 @@ class LeadService
 
             return $deal;
         });
+
+        DashboardCacheService::flush();
+
+        return $deal;
     }
 }

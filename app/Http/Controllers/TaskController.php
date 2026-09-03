@@ -26,16 +26,7 @@ class TaskController extends Controller
         $this->authorize('viewAny', Task::class);
 
         $tasks = Task::query()
-            ->with([
-                'assignedUser:id,name',
-                'taskable' => function ($morphTo) {
-                    $morphTo->morphWith([
-                        Company::class => ['id', 'name'],
-                        Lead::class => ['id', 'name'],
-                        Deal::class => ['id', 'title'],
-                    ]);
-                },
-            ])
+            ->with(['assignedUser:id,name', 'taskable'])
             ->when($request->search, fn($query, $search) => $query->where('title', 'like', "%{$search}%"))
             ->when($request->status, fn($query, $status) => $query->where('status', $status))
             ->when($request->priority, fn($query, $priority) => $query->where('priority', $priority))
@@ -48,7 +39,6 @@ class TaskController extends Controller
 
         return view('tasks.index', compact('tasks', 'users'));
     }
-
     // Display task details
     public function show(Task $task): View
     {

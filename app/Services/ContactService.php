@@ -53,25 +53,35 @@ class ContactService
     // Create a new contact
     public function create(array $data, User $user): Contact
     {
-        return DB::transaction(fn() => Contact::create([
+        $contact = DB::transaction(fn() => Contact::create([
             ...$data,
             'created_by' => $user->id,
         ]));
+
+        DashboardCacheService::flush();
+
+        return $contact;
     }
 
     // Update an existing contact
     public function update(Contact $contact, array $data): Contact
     {
-        return DB::transaction(function () use ($contact, $data) {
+        $contact = DB::transaction(function () use ($contact, $data) {
             $contact->update($data);
 
             return $contact;
         });
+
+        DashboardCacheService::flush();
+
+        return $contact;
     }
 
     // Delete a contact
     public function delete(Contact $contact): void
     {
         DB::transaction(fn() => $contact->delete());
+
+        DashboardCacheService::flush();
     }
 }
